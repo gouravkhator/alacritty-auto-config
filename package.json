@@ -1,0 +1,39 @@
+{
+  "name": "alacritty-auto-config",
+  "version": "1.0.0",
+  "private": "false",
+  "description": "Auto Configuration Library for Alacritty Terminal Emulator",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "rimraf dist/ && tsc && rollup -c rollup.config.js",
+    "dev": "tsc --watch",
+    "cli": "node dist/index.js"
+  },
+  "keywords": [
+    "alacritty",
+    "auto-config",
+    "gouravkhator"
+  ],
+  "author": "Gourav Khator",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^15.0.2",
+    "@types/yamljs": "^0.2.31",
+    "@types/yargs": "^16.0.1",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.47.0",
+    "typescript": "^4.2.4"
+  },
+  "dependencies": {
+    "yamljs": "^0.3.0",
+    "yargs": "^17.0.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gouravkhator/alacritty-auto-config.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gouravkhator/alacritty-auto-config/issues"
+  },
+  "homepage": "https://github.com/gouravkhator/alacritty-auto-config#readme"
+}
