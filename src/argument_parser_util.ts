@@ -8,8 +8,9 @@ export const hex_color_regex = /^0x([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/;
 export const hash_color_regex = /^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/;
 
 /**
+ * Converts short color codes in 3 letter format to long color codes in 6 letter format.
  * 
- * @param color_code Color code in # or 0x format, without prefix. Eg: for color #fff, color_code will be passed as fff
+ * @param color_code Color code in # or 0x format, without prefix. Ex:- for color '#fff', color_code will be passed as 'fff'
  * @returns Color code which is expanded to 6 digits, if it was initially 3 digits long
  */
 export function convertShortToLongCode(color_code: string): string {
@@ -17,8 +18,8 @@ export function convertShortToLongCode(color_code: string): string {
     const color_code_regex = /^([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/;
 
     // if the color code is not 3 or 6 letters long, or if it has other characters than specified in regex, then throw error
-    if(!color_code_regex.test(color_code)){
-        throw new Error("Color code is not in 3 letter format or 6 letter format..")
+    if (!color_code_regex.test(color_code)) {
+        throw new Error("Color code, provided in params, is neither in 3 letter format nor in 6 letter format..");
     }
 
     // if the hex code is 3 letters long, then duplicate each letter to make 6 letters long hex color code
@@ -31,11 +32,22 @@ export function convertShortToLongCode(color_code: string): string {
 
         return temp_str;
     }
-    
+
     return color_code; // color_code is 6 letters long, as all checks were done above
 }
 
-// TODO: Add docs
+/**
+ * Converts color code into # format in string like '#f12ef3'
+ * 
+ * @param color_code Color code with prefix as # or 0x in string format (Eg: '#fff' or '0xfff').
+ * 
+ * Or, in number (hexadecimal) format (Eg: 0xf12). 
+ * 
+ * 3 or 6 letters color codes are accepted.
+ * @returns 6 letter Color code with prefix as # in string format. 
+ * @returns undefined, if the provided color code is empty or undefined
+ * @throwsError if Color code is not provided in correct format
+ */
 export function convertToHash(color_code: string | number): string | undefined {
     // color code is normally provided in string, but if the hexadecimal is provided then its inputted as decimal number.
     if (typeof (color_code) === 'string') {
@@ -57,7 +69,7 @@ export function convertToHash(color_code: string | number): string | undefined {
             throw new Error('Color code is not provided in hex(0x) or hash(#) format..');
         }
     }
-    else if(typeof(color_code) === "number"){
+    else if (typeof (color_code) === "number") {
         // color_code will be decimal format of hexadecimal number(which is also in 0x format but not a string)
         // if color code inputted was 0x1f2, then its decimal was saved in color_code variable, and toString(16) will get back the '1f2' part as string in temp_str
         let temp_str: string = color_code.toString(16);
@@ -65,7 +77,18 @@ export function convertToHash(color_code: string | number): string | undefined {
     }
 }
 
-// TODO: Add docs
+/**
+ * Converts color code into 0x format in string like '0xf12ef3'
+ * 
+ * @param color_code Color code with prefix as # or 0x in string format (Eg: '#fff' or '0xfff') 
+ * 
+ * Or, in number (hexadecimal) format (Eg: 0xf12). 
+ * 
+ * 3 or 6 letters color codes are accepted.
+ * @returns 6 letter Color code with prefix as 0x in string format. 
+ * @returns undefined, if the provided color code is empty or undefined
+ * @throwsError if Color code is not provided in correct format
+ */
 export function convertToHex(color_code: string | number): string | undefined {
     // color code is normally provided in string, but if the hexadecimal is provided then its inputted as decimal number.
     if (typeof (color_code) === 'string') {
@@ -87,15 +110,20 @@ export function convertToHex(color_code: string | number): string | undefined {
             throw new Error('Color code is not provided in hex(0x) or hash(#) format..');
         }
 
-    }else if(typeof(color_code) === "number"){
+    } else if (typeof (color_code) === "number") {
         // color_code will be decimal format of hexadecimal number(which is also in 0x format but not a string)
         let temp_str: string = color_code.toString(16);
         return "0x" + convertShortToLongCode(temp_str);
     }
 }
 
-// TODO: Add docs
-export function takeArgumentInputs(alacritty_config_object: alacritty_config_structure = {}) {
+/**
+ * Takes argument inputs for the alacritty configuration.
+ * 
+ * @param alacritty_old_config Alacritty old config object with params (if it exists) 
+ * @returns Argument Inputs object with all properties taken as input from the user
+ */
+export function takeArgumentInputs(alacritty_old_config: alacritty_config_structure = {}): any {
     // for referring to options' longnames
     const arg_keys: {
         s: string;
@@ -135,9 +163,9 @@ export function takeArgumentInputs(alacritty_config_object: alacritty_config_str
         .alias('v', 'version')
 
         // defaults to alacritty old config if that exists or our own default
-        .default(arg_keys.s, alacritty_config_object?.font?.size ?? default_values.s)
-        .default(arg_keys.b, alacritty_config_object?.colors?.primary?.background ?? default_values.b)
-        .default(arg_keys.c, alacritty_config_object?.colors?.primary?.foreground ?? default_values.c)
+        .default(arg_keys.s, alacritty_old_config?.font?.size ?? default_values.s)
+        .default(arg_keys.b, alacritty_old_config?.colors?.primary?.background ?? default_values.b)
+        .default(arg_keys.c, alacritty_old_config?.colors?.primary?.foreground ?? default_values.c)
 
         // number of arguments
         .nargs({
