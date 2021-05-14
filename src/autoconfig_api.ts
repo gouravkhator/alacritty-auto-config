@@ -1,7 +1,7 @@
 import os from "os";
 import fs from "fs";
 import path from "path";
-import YAML from 'yamljs';
+import YAML from "yamljs";
 import { execSync } from "child_process";
 
 import { convertToHex } from "./argument_parser_util";

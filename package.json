@@ -5,7 +5,8 @@
   "description": "Auto Configuration Library for Alacritty Terminal Emulator",
   "main": "dist/index.js",
   "scripts": {
-    "build": "rimraf dist/ && tsc && rollup -c rollup.config.js",
+    "prebuild": "rimraf dist/",
+    "build": "tsc && rollup -c",
     "dev": "tsc --watch",
     "cli": "node dist/index.js"
   },
@@ -17,11 +18,15 @@
   "author": "Gourav Khator",
   "license": "ISC",
   "devDependencies": {
+    "@rollup/plugin-inject": "^4.0.2",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.0.0",
     "@types/node": "^15.0.2",
     "@types/yamljs": "^0.2.31",
     "@types/yargs": "^16.0.1",
     "rimraf": "^3.0.2",
     "rollup": "^2.47.0",
+    "rollup-plugin-terser": "^7.0.2",
     "typescript": "^4.2.4"
   },
   "dependencies": {

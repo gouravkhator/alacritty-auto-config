@@ -1,9 +1,8 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
+        "module": "esnext",
         "noImplicitAny": true,
         "noEmitOnError": true,
-        "removeComments": true,
         "preserveConstEnums": true,
         "outDir": "output_tsc",
         "sourceMap": true,
