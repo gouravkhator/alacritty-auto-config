@@ -1,22 +1,10 @@
-'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-var path = require('path');
-var yargs = require('yargs/yargs');
-var helpers = require('yargs/helpers');
-var os = require('os');
-var fs = require('fs');
-var YAML = require('yamljs');
-var child_process = require('child_process');
-
-function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
-
-var path__default = /*#__PURE__*/_interopDefaultLegacy(path);
-var yargs__default = /*#__PURE__*/_interopDefaultLegacy(yargs);
-var os__default = /*#__PURE__*/_interopDefaultLegacy(os);
-var fs__default = /*#__PURE__*/_interopDefaultLegacy(fs);
-var YAML__default = /*#__PURE__*/_interopDefaultLegacy(YAML);
+import path from 'path';
+import yargs from 'yargs/yargs';
+import { hideBin } from 'yargs/helpers';
+import os from 'os';
+import fs from 'fs';
+import YAML from 'yamljs';
+import { execSync } from 'child_process';
 
 var version = "1.0.0";
 
@@ -105,7 +93,7 @@ function takeArgumentInputs(alacritty_old_config) {
         b: '#333333',
         c: '#ffffff'
     };
-    return yargs__default['default'](helpers.hideBin(process.argv))
+    return yargs(hideBin(process.argv))
         .usage('Usage: node dist/$0 [options]=[values]\n\nThe options may/may not provided in the CLI. If they are not provided, all the defaults are set.')
         // .demandOption(['s', 'b', 'c']) // to set them required, but as I am setting defaults so its optional
         // options
@@ -171,23 +159,23 @@ var __assign = (globalThis && globalThis.__assign) || function () {
  */
 function configInit() {
     // check for os type
-    if (os__default['default'].type() === 'Windows_NT') {
+    if (os.type() === 'Windows_NT') {
         // The path for alacritty config is %APPDATA%\alacritty\alacritty.yml
         // TODO: I can code up this if windows users can confirm the working
         throw new Error("Platform win32 not supported by our app");
     }
     // check if alacritty is installed or not
     try {
-        child_process.execSync('which alacritty');
+        execSync('which alacritty');
     }
     catch (err) {
         throw new Error("Package Not Installed: alacritty is not installed in your system or it's path is not set in your PATH variable, so you cannot use our library..");
     }
-    var original_config_path = path__default['default'].join(os__default['default'].homedir(), '.config/alacritty/alacritty.yml');
-    if (!fs__default['default'].existsSync(original_config_path)) {
+    var original_config_path = path.join(os.homedir(), '.config/alacritty/alacritty.yml');
+    if (!fs.existsSync(original_config_path)) {
         // mkdirectory recursively for original config file if it does not exists
-        fs__default['default'].mkdirSync(path__default['default'].dirname(original_config_path), { recursive: true });
-        fs__default['default'].writeFileSync(original_config_path, '');
+        fs.mkdirSync(path.dirname(original_config_path), { recursive: true });
+        fs.writeFileSync(original_config_path, '');
     }
     return original_config_path;
 }
@@ -202,7 +190,7 @@ function configInit() {
  */
 function readOriginalConfig(original_config_path) {
     try {
-        var alacritty_config = YAML__default['default'].load(original_config_path);
+        var alacritty_config = YAML.load(original_config_path);
         return alacritty_config;
     }
     catch (err) {
@@ -217,16 +205,16 @@ function readOriginalConfig(original_config_path) {
  */
 function writeToConfigFile(alacritty_config_to_write, original_config_path_dir) {
     var temp_config_dir = 'user_config_temp';
-    var json_file_path = path__default['default'].resolve(temp_config_dir, 'alacritty.json');
+    var json_file_path = path.resolve(temp_config_dir, 'alacritty.json');
     // mkdir recursively if it does not exists
-    fs__default['default'].mkdirSync(temp_config_dir, { recursive: true });
+    fs.mkdirSync(temp_config_dir, { recursive: true });
     // write to json
-    fs__default['default'].writeFileSync(json_file_path, JSON.stringify(alacritty_config_to_write), 'utf8');
+    fs.writeFileSync(json_file_path, JSON.stringify(alacritty_config_to_write), 'utf8');
     /*
     First, convert json to yaml and then rename that yaml to yml, then cp that yml file to the original config folder and finally remove the temp config folder created. I have written all paths within single quotes as the path can have spaces also.
     */
-    var write_command = "npx json2yaml '" + json_file_path + "' --save -d 8 && mv '" + path__default['default'].resolve(temp_config_dir, 'alacritty.yaml') + "' '" + path__default['default'].resolve(temp_config_dir, 'alacritty.yml') + "' && cp '" + path__default['default'].resolve(temp_config_dir, 'alacritty.yml') + "' '" + original_config_path_dir + "' && rm -rf " + temp_config_dir;
-    child_process.execSync(write_command);
+    var write_command = "npx json2yaml '" + json_file_path + "' --save -d 8 && mv '" + path.resolve(temp_config_dir, 'alacritty.yaml') + "' '" + path.resolve(temp_config_dir, 'alacritty.yml') + "' && cp '" + path.resolve(temp_config_dir, 'alacritty.yml') + "' '" + original_config_path_dir + "' && rm -rf " + temp_config_dir;
+    execSync(write_command);
     console.log('Please close and reopen all windows of alacritty if some effects were not applied..');
 }
 /**
@@ -277,7 +265,7 @@ function main() {
     try {
         original_config_path = configInit();
         var alacritty_config = readOriginalConfig(original_config_path);
-        var original_config_path_dir = path__default['default'].dirname(original_config_path);
+        var original_config_path_dir = path.dirname(original_config_path);
         var argumentInputs = takeArgumentInputs(alacritty_config);
         // if the arguments are not passed, it will take the old config only, and if config does not have that property, it will set defaults for that
         editConfig(alacritty_config, {
@@ -291,11 +279,8 @@ function main() {
     }
 }
 // Only run main() when the file is run from cli
-if ((typeof document === 'undefined' ? new (require('u' + 'rl').URL)('file:' + __filename).href : (document.currentScript && document.currentScript.src || new URL('bundle.cjs.js', document.baseURI).href)) === "file://" + process.argv[1]) {
+if (import.meta.url === "file://" + process.argv[1]) {
     main();
 }
 
-exports.configInit = configInit;
-exports.editConfig = editConfig;
-exports.readOriginalConfig = readOriginalConfig;
-exports.writeToConfigFile = writeToConfigFile;
+export { configInit, editConfig, readOriginalConfig, writeToConfigFile };

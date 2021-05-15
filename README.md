@@ -14,7 +14,7 @@ npm install
 npm run build
 ```
 
-## Run the development watch mode 
+## Run the development watch mode
 
 **This watch mode watches continuously for the typescript files**
 
@@ -35,13 +35,13 @@ npm run cli
 * Show Help:
 
 ```sh
-node dist/index.js -h
+node dist/bundle.cjs.js -h
 ```
 
 Or,
 
 ```sh
-node dist/index.js --help
+node dist/bundle.cjs.js --help
 ```
 
 * Options:

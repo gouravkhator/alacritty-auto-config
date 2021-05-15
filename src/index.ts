@@ -30,7 +30,10 @@ function main(){
     }
 }
 
-main();
+// Only run main() when the file is run from cli
+if (import.meta.url === `file://${process.argv[1]}`){
+    main();
+}
 
 // export all the structures/types to be used
 export * from "./config_object_structures";
