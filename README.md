@@ -35,13 +35,13 @@ npm run cli
 * Show Help:
 
 ```sh
-node dist/bundle.cjs.js -h
+node dist/bundle.mjs -h
 ```
 
 Or,
 
 ```sh
-node dist/bundle.cjs.js --help
+node dist/bundle.mjs --help
 ```
 
 * Options:
@@ -52,6 +52,8 @@ node dist/bundle.cjs.js --help
 -c, --fgcolor: Takes primary foreground color in '#xxxxxx' or '#xxx' or '0xfff' or '0xffffff' format (default='#ffffff')
 -v, --version: Show version number
 ```
+
+Note: The above commands also work for dist/bundle.cjs file.
 
 ## NPM Package Usage
 

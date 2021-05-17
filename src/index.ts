@@ -1,8 +1,10 @@
 import path from "path";
+import { URL } from "url";
 
-import { takeArgumentInputs } from "./argument_parser_util";
-import { configInit, readOriginalConfig, editConfig } from "./autoconfig_api";
-import { alacritty_config_structure } from "./config_object_structures";
+// file extension is needed for local modules, but not needed for packages installed which have exports option
+import { takeArgumentInputs } from "./argument_parser_util.js";
+import { configInit, readOriginalConfig, editConfig } from "./autoconfig_api.js";
+import { alacritty_config_structure } from "./config_object_structures.js";
 
 /**
  * Main Function which is run from the command line
@@ -18,7 +20,7 @@ function main(){
 
         let argumentInputs = takeArgumentInputs(alacritty_config); 
         // if the arguments are not passed, it will take the old config only, and if config does not have that property, it will set defaults for that
-
+        
         editConfig(alacritty_config, {
             fontsize: parseFloat(argumentInputs.s),
             primary_bgcolor: argumentInputs.b,
@@ -31,11 +33,13 @@ function main(){
 }
 
 // Only run main() when the file is run from cli
-if (import.meta.url === `file://${process.argv[1]}`){
+const fileURL: URL = new URL(`file://${process.argv[1]}`); 
+// converting the path to URL as this will make the valid url out of it, like replace space with %20, or some special characters with some codes
+
+if (import.meta.url === fileURL.toString()){
     main();
 }
 
-// export all the structures/types to be used
-export * from "./config_object_structures";
 // export all the api functions
-export * from "./autoconfig_api";
+export * from "./autoconfig_api.js";
+export * from "./argument_parser_util.js";

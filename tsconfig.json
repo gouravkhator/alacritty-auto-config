@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
         "module": "esnext",
+        "target": "ES2015",
         "noImplicitAny": true,
         "noEmitOnError": true,
         "preserveConstEnums": true,
@@ -8,7 +9,7 @@
         "sourceMap": true,
         "declaration": true,
         "declarationMap": true,
-        "declarationDir": "./types",
+        "declarationDir": "types",
         "allowJs": true,
         "resolveJsonModule": true,
         "lib": [
@@ -23,5 +24,6 @@
     "exclude": [
         "node_modules",
         "dist",
+        "types",
     ]
 }

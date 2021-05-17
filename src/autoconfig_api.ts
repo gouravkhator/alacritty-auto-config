@@ -4,8 +4,8 @@ import path from "path";
 import YAML from "yamljs";
 import { execSync } from "child_process";
 
-import { convertToHex } from "./argument_parser_util";
-import { alacritty_summarized_config_structure, alacritty_config_structure } from "./config_object_structures";
+import { convertToHex } from "./argument_parser_util.js";
+import { alacritty_summarized_config_structure, alacritty_config_structure } from "./config_object_structures.js";
 
 /**
  * Checks if the alacritty is installed or not. 

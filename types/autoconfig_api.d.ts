@@ -1,4 +1,4 @@
-import { alacritty_summarized_config_structure, alacritty_config_structure } from "./config_object_structures";
+import { alacritty_summarized_config_structure, alacritty_config_structure } from "./config_object_structures.js";
 /**
  * Checks if the alacritty is installed or not.
  *

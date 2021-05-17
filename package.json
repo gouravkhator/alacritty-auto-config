@@ -3,13 +3,18 @@
   "version": "1.0.0",
   "private": "false",
   "description": "Auto Configuration Library for Alacritty Terminal Emulator",
-  "main": "dist/bundle.cjs.js",
-  "module": "dist/bundle.esm.js",
+  "main": "./dist/bundle.cjs",
+  "type": "module",
+  "exports": {
+    "import": "./dist/bundle.mjs",
+    "require": "./dist/bundle.cjs",
+    "default": "./dist/bundle.min.mjs"
+  },
   "scripts": {
-    "prebuild": "rimraf dist/ types/",
+    "prebuild": "rimraf dist/ output_tsc/ types/",
     "build": "tsc && rollup -c",
     "dev": "tsc --watch",
-    "cli": "node dist/bundle.cjs.js"
+    "cli": "node dist/bundle.mjs"
   },
   "keywords": [
     "alacritty",
@@ -20,6 +25,7 @@
   "license": "MIT",
   "devDependencies": {
     "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-replace": "^2.4.2",
     "@types/node": "^15.0.2",
     "@types/yamljs": "^0.2.31",
     "@types/yargs": "^16.0.1",

@@ -1,8 +1,8 @@
-import yargs from 'yargs/yargs';
+import yargs from 'yargs'; 
+// changed from yargs/yargs to yargs as yargs/yargs is only in commonjs format and not exported as es modules
 import { hideBin } from 'yargs/helpers';
 
-import { version as packageVersion } from "../package.json";
-import { alacritty_config_structure } from "./config_object_structures";
+import { alacritty_config_structure } from "./config_object_structures.js";
 
 export const hex_color_regex = /^0x([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/;
 export const hash_color_regex = /^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/;
@@ -153,7 +153,7 @@ export function takeArgumentInputs(alacritty_old_config: alacritty_config_struct
 
         // options
         .help('h')
-        .version(packageVersion)
+        .version("{{version}}") // the version is replaced in rollup build process
 
         // aliases
         .alias('s', arg_keys.s)

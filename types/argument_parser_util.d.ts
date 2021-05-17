@@ -1,4 +1,4 @@
-import { alacritty_config_structure } from "./config_object_structures";
+import { alacritty_config_structure } from "./config_object_structures.js";
 export declare const hex_color_regex: RegExp;
 export declare const hash_color_regex: RegExp;
 /**
