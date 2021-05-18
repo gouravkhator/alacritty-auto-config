@@ -1,6 +1,6 @@
 {
   "name": "alacritty-auto-config",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Auto Configuration Library for Alacritty Terminal Emulator",
   "main": "./dist/bundle.cjs",
   "type": "module",
