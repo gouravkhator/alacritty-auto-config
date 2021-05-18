@@ -9,18 +9,27 @@
     "require": "./dist/bundle.cjs",
     "default": "./dist/bundle.min.mjs"
   },
+  "bin": {
+    "alacritty-auto-config": "./dist/bundle.mjs",
+    "aac": "./dist/bundle.mjs"
+  },
   "scripts": {
     "prebuild": "rimraf dist/ output_tsc/ types/",
     "build": "tsc && rollup -c",
-    "dev": "tsc --watch",
-    "cli": "node dist/bundle.mjs"
+    "dev": "tsc --watch"
   },
   "keywords": [
     "alacritty",
     "auto-config",
-    "gouravkhator"
+    "gouravkhator",
+    "configuration",
+    "cli",
+    "api"
   ],
-  "author": "Gourav Khator",
+  "author": {
+    "name": "Gourav Khator",
+    "email": "gouravkhator10@gmail.com"
+  },
   "license": "MIT",
   "devDependencies": {
     "@rollup/plugin-json": "^4.1.0",

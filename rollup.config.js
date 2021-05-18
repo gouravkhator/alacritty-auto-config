@@ -27,12 +27,11 @@ export default {
         // {
         //     file: `${dist_dir}/bundle.min.js`,
         //     format: 'iife',
-        //     name: 'alacrittyCliConfig',
-        //     external: ['yargs', 'yamljs', 'path', 'os', 'fs', 'child_process'],
+        //     name: 'alacrittyConfig',
         //     plugins: [terser()]
-        // }
+        // },
         // {
-        //     name: 'alacritty-auto-config',
+        //     name: 'alacrittyConfig',
         //     dir: dist_dir,
         //     format: 'umd',
         // }
