@@ -2,16 +2,27 @@
   "name": "alacritty-auto-config",
   "version": "1.0.1",
   "description": "Auto Configuration Library for Alacritty Terminal Emulator",
-  "main": "./dist/bundle.cjs",
+  "main": "./dist/cjs/bundle.cjs",
   "type": "module",
   "exports": {
-    "import": "./dist/bundle.mjs",
-    "require": "./dist/bundle.cjs",
-    "default": "./dist/bundle.min.mjs"
+    "import": "./dist/esm/bundle.mjs",
+    "require": "./dist/cjs/bundle.cjs",
+    "default": "./dist/esm/bundle.min.mjs"
   },
   "bin": {
-    "alacritty-auto-config": "./dist/bundle.mjs",
-    "aac": "./dist/bundle.mjs"
+    "alacritty-auto-config": "./dist/cjs/bundle.cjs",
+    "aac": "./dist/cjs/bundle.cjs"
+  },
+  "pkg": {
+    "assets": [
+      "node_modules/**/*"
+    ],
+    "targets": [
+      "node16-linux-x64",
+      "node16-macos-x64",
+      "node16-win-x64"
+    ],
+    "outputPath": "dist/exec"
   },
   "scripts": {
     "prebuild": "rimraf dist/ output_tsc/ types/",
@@ -38,6 +49,7 @@
     "@types/yamljs": "^0.2.31",
     "@types/yargs": "^16.0.1",
     "builtin-modules": "^3.2.0",
+    "pkg": "^5.2.1",
     "rimraf": "^3.0.2",
     "rollup": "^2.47.0",
     "rollup-plugin-terser": "^7.0.2",

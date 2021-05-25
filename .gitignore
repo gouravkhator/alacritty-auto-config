@@ -2,4 +2,5 @@ node_modules/
 
 # temporary folders generated at runtime
 output_tsc/
-user_config_temp/
+
+dist/exec/

@@ -12,15 +12,15 @@ export default {
     input: 'output_tsc/index.js',
     output: [
         {
-            file: `${dist_dir}/bundle.cjs`,
+            file: `${dist_dir}/cjs/bundle.cjs`,
             format: 'cjs',
         },
         {
-            file: `${dist_dir}/bundle.mjs`,
+            file: `${dist_dir}/esm/bundle.mjs`,
             format: 'esm',
         },
         {
-            file: `${dist_dir}/bundle.min.mjs`,
+            file: `${dist_dir}/esm/bundle.min.mjs`,
             format: 'esm',
             plugins:[ terser() ], // terser is for minification of esm bundle
         },
@@ -45,6 +45,7 @@ export default {
         version: packageVersion, 
         preventAssignment: true, 
         // prevents assignment of '{{version}}' to a variable when this string is followed by '=' sign
+        // Ex- let x = '{{version}}', then x will be {{version}} and not some version no.
     }) ],
 
     external: [...builtins, 'yargs','yargs/helpers', 'yamljs'], // builtin nodejs modules and other external modules

@@ -36,7 +36,7 @@ const fileURL: URL = new URL(`file://${process.argv[1]}`);
 // converting the path to URL as this will make the valid url out of it, like replace space with %20, or some special characters with some codes
 
 // Only run main() when the file is run from cli
-if (import.meta.url === fileURL.toString()){
+if (import.meta?.url === fileURL.toString()){
     main();
 }
 

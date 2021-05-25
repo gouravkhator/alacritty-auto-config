@@ -21,6 +21,9 @@ var YAML__default = /*#__PURE__*/_interopDefaultLegacy(YAML);
 
 const hex_color_regex = /^0x([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/;
 const hash_color_regex = /^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/;
+// ! ISSUE: If the color code is 0x0.. then it gives error in yargs format
+// ! ISSUE: If color code is 0x000 then error is raised and program terminates unexpectedly.
+// ! ISSUE: If wrong params like -z or -f etc. are given, then give error
 /**
  * Converts short color codes in 3 letter format to long color codes in 6 letter format.
  *
@@ -142,11 +145,11 @@ function takeArgumentInputs(alacritty_old_config = {}) {
         c: '#ffffff',
     };
     return yargs__default['default'](helpers.hideBin(process.argv))
-        .usage('Usage: node dist/$0 [options]=[values]\n\nThe options may/may not provided in the CLI. If they are not provided, all the defaults are set.')
+        .usage('Usage: node dist/$0 [options]=[values]\n\nThe options may/may not provided in the CLI. If they are not provided, either the previously set config is used or the defaults are set.')
         // .demandOption(['s', 'b', 'c']) // to set them required, but as I am setting defaults so its optional
         // options
         .help('h')
-        .version("1.0.0") // the version is replaced in rollup build process
+        .version("1.0.1") // the version is replaced in rollup build process
         // aliases
         .alias('s', arg_keys.s)
         .alias('b', arg_keys.b)
@@ -245,7 +248,8 @@ function readOriginalConfig(original_config_path) {
  * @param original_config_path_dir Absolute Path for the original alacritty config directory (Ex- /home/gourav/.config/alacritty/)
  */
 function writeToConfigFile(alacritty_config_to_write, original_config_path_dir) {
-    const temp_config_dir = 'user_config_temp';
+    // const temp_config_dir = 'user_config_temp';
+    const temp_config_dir = path__default['default'].join(original_config_path_dir, 'user_config_temp');
     const json_file_path = path__default['default'].resolve(temp_config_dir, 'alacritty.json');
     // mkdir recursively if it does not exists
     fs__default['default'].mkdirSync(temp_config_dir, { recursive: true });
@@ -297,6 +301,7 @@ function editConfig(alacritty_old_config = {}, new_config, original_config_path_
     return alacritty_updated_config;
 }
 
+var _a;
 /**
  * Main Function which is run from the command line
  */
@@ -321,7 +326,7 @@ function main() {
 const fileURL = new url.URL(`file://${process.argv[1]}`);
 // converting the path to URL as this will make the valid url out of it, like replace space with %20, or some special characters with some codes
 // Only run main() when the file is run from cli
-if ((typeof document === 'undefined' ? new (require('u' + 'rl').URL)('file:' + __filename).href : (document.currentScript && document.currentScript.src || new URL('bundle.cjs', document.baseURI).href)) === fileURL.toString()) {
+if (((_a = (({ url: (typeof document === 'undefined' ? new (require('u' + 'rl').URL)('file:' + __filename).href : (document.currentScript && document.currentScript.src || new URL('bundle.cjs', document.baseURI).href)) }))) === null || _a === void 0 ? void 0 : _a.url) === fileURL.toString()) {
     main();
 }
 

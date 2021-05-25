@@ -7,6 +7,10 @@ import { alacritty_config_structure } from "./config_object_structures.js";
 export const hex_color_regex = /^0x([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/;
 export const hash_color_regex = /^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/;
 
+// ! ISSUE: If the color code is 0x0.. then it gives error in yargs format
+// ! ISSUE: If color code is 0x000 then error is raised and program terminates unexpectedly.
+// ! ISSUE: If wrong params like -z or -f etc. are given, then give error
+
 /**
  * Converts short color codes in 3 letter format to long color codes in 6 letter format.
  * 
@@ -147,7 +151,7 @@ export function takeArgumentInputs(alacritty_old_config: alacritty_config_struct
     }
 
     return yargs(hideBin(process.argv))
-        .usage('Usage: node dist/$0 [options]=[values]\n\nThe options may/may not provided in the CLI. If they are not provided, all the defaults are set.')
+        .usage('Usage: node dist/$0 [options]=[values]\n\nThe options may/may not provided in the CLI. If they are not provided, either the previously set config is used or the defaults are set.')
 
         // .demandOption(['s', 'b', 'c']) // to set them required, but as I am setting defaults so its optional
 

@@ -66,7 +66,8 @@ export function readOriginalConfig(original_config_path: string): alacritty_conf
  * @param original_config_path_dir Absolute Path for the original alacritty config directory (Ex- /home/gourav/.config/alacritty/)
  */
 export function writeToConfigFile(alacritty_config_to_write: alacritty_config_structure, original_config_path_dir: string) {
-    const temp_config_dir = 'user_config_temp';
+    // const temp_config_dir = 'user_config_temp';
+    const temp_config_dir = path.join(original_config_path_dir, 'user_config_temp');
 
     const json_file_path = path.resolve(temp_config_dir, 'alacritty.json');
 
