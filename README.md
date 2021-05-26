@@ -6,6 +6,8 @@ This is a small npm library which is used to automatically configure Alacritty b
 
 ### Install the npm package
 
+**Sorry, but the global install is having some issues, I am working on that. If you can contribute, it will be of great help to me. I accept PRs.**
+
 Install the package globally:
 ```sh
 npm install -g alacritty-auto-config

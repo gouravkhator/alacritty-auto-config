@@ -1,6 +1,7 @@
 import { alacritty_config_structure } from "./config_object_structures.js";
 export declare const hex_color_regex: RegExp;
 export declare const hash_color_regex: RegExp;
+export declare function capitaliseString(str: string): string | undefined;
 /**
  * Converts short color codes in 3 letter format to long color codes in 6 letter format.
  *

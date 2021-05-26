@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import path from 'path';
 import { URL } from 'url';
 import yargs from 'yargs';
@@ -12,6 +13,14 @@ const hash_color_regex = /^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/;
 // ! ISSUE: If the color code is 0x0.. then it gives error in yargs format
 // ! ISSUE: If color code is 0x000 then error is raised and program terminates unexpectedly.
 // ! ISSUE: If wrong params like -z or -f etc. are given, then give error
+function capitaliseString(str) {
+    if (!!str) {
+        return str[0].toUpperCase() + str.substring(1).toLowerCase();
+    }
+    else {
+        return undefined;
+    }
+}
 /**
  * Converts short color codes in 3 letter format to long color codes in 6 letter format.
  *
@@ -119,18 +128,24 @@ function convertToHex(color_code) {
  * @returns Argument Inputs object with all properties taken as input from the user
  */
 function takeArgumentInputs(alacritty_old_config = {}) {
-    var _a, _b, _c, _d, _e, _f, _g, _h;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
     // for referring to options' longnames
     const arg_keys = {
         s: 'fontsize',
         b: 'bgcolor',
         c: 'fgcolor',
+        t: 'selcolor',
+        y: 'cursor',
+        o: 'opacity', // background opacity
     };
     // provide optional default values (for fields you want to provide)
     const default_values = {
-        s: 10,
-        b: '#333333',
-        c: '#ffffff',
+        s: 16,
+        b: '#111122',
+        c: '#ccccff',
+        t: '#111122',
+        y: "Block",
+        o: 1.0,
     };
     return yargs(hideBin(process.argv))
         .usage('Usage: node dist/$0 [options]=[values]\n\nThe options may/may not provided in the CLI. If they are not provided, either the previously set config is used or the defaults are set.')
@@ -142,30 +157,41 @@ function takeArgumentInputs(alacritty_old_config = {}) {
         .alias('s', arg_keys.s)
         .alias('b', arg_keys.b)
         .alias('c', arg_keys.c)
+        .alias('t', arg_keys.t)
+        .alias('y', arg_keys.y)
+        .alias('o', arg_keys.o)
         .alias('h', 'help')
         .alias('v', 'version')
         // defaults to alacritty old config if that exists or our own default
         .default(arg_keys.s, (_b = (_a = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.font) === null || _a === void 0 ? void 0 : _a.size) !== null && _b !== void 0 ? _b : default_values.s)
         .default(arg_keys.b, (_e = (_d = (_c = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.colors) === null || _c === void 0 ? void 0 : _c.primary) === null || _d === void 0 ? void 0 : _d.background) !== null && _e !== void 0 ? _e : default_values.b)
         .default(arg_keys.c, (_h = (_g = (_f = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.colors) === null || _f === void 0 ? void 0 : _f.primary) === null || _g === void 0 ? void 0 : _g.foreground) !== null && _h !== void 0 ? _h : default_values.c)
+        .default(arg_keys.t, (_l = (_k = (_j = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.colors) === null || _j === void 0 ? void 0 : _j.selection) === null || _k === void 0 ? void 0 : _k.text) !== null && _l !== void 0 ? _l : default_values.t)
+        .default(arg_keys.y, (_o = (_m = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.cursor) === null || _m === void 0 ? void 0 : _m.style) !== null && _o !== void 0 ? _o : default_values.y)
+        .default(arg_keys.o, (_p = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.background_opacity) !== null && _p !== void 0 ? _p : default_values.o)
         // number of arguments
         .nargs({
         [arg_keys.s]: 1,
         [arg_keys.b]: 1,
         [arg_keys.c]: 1,
+        [arg_keys.t]: 1,
+        [arg_keys.y]: 1,
+        [arg_keys.o]: 1,
     })
         // description of options
         .describe(arg_keys.s, `Takes font size to be set in alacritty\t[default=${default_values.s}]`)
         .describe(arg_keys.b, `Takes primary background color in #ffffff or #fff or 0xfff or 0xffffff format\t[default=${default_values.b}]`)
         .describe(arg_keys.c, `Takes primary foreground color in #ffffff or #fff or 0xfff or 0xffffff format\t[default=${default_values.c}]`)
+        .describe(arg_keys.t, `Takes text color (when the area is selected) in #ffffff or #fff or 0xfff or 0xffffff format\t[default=${default_values.t}]`)
+        .describe(arg_keys.y, `Takes cursor style that can be Block or Underline or Beam\t[default=${default_values.y}]`)
+        .describe(arg_keys.o, `Takes background opacity which is between 0.0 (transparent) and 1.0 (opaque)\t[default=${default_values.o}]`)
         // conditional checks
         .check((argv) => {
-        // argv.anyproperty is a string and nothing else
-        if (argv.s && (parseFloat(argv.s) <= 0.0 || parseFloat(argv.s) > 40.0)) {
+        if (argv.s && (argv.s <= 0.0 || argv.s > 40.0)) {
             throw new Error(`Wrong Arguments: Provided font size ${argv.s} should be within the range of display: 0.1 to 40.0`);
         }
         /* If the color is provided as 0x111 then its actually taken as hexadecimal number, so its typeof will be "number".
-        
+
         But here, as b is a string in typescript. So the check of whether its a number input or not will never be possible. It will not be compiled.
 
         Same is the case with other colors.
@@ -175,6 +201,16 @@ function takeArgumentInputs(alacritty_old_config = {}) {
         }
         if (argv.c && convertToHex(argv.c) === undefined) {
             throw new Error(`Wrong Arguments: Provided font color ${argv.c} should be in hash or hex format`);
+        }
+        if (argv.t && convertToHex(argv.t) === undefined) {
+            throw new Error(`Wrong Arguments: Provided selection text color ${argv.t} should be in hash or hex format`);
+        }
+        // allowing any case for cursor style (lower, upper or mixed)
+        if (argv.y && !["Block", "Underline", "Beam"].includes(capitaliseString("" + argv.y))) {
+            throw new Error(`Wrong Arguments: Provided cursor style ${argv.y} should be in one of the 3 styles`);
+        }
+        if (argv.o && (argv.o < 0.0 || argv.o > 1.0)) {
+            throw new Error(`Wrong Arguments: Provided background opacity ${argv.o} should be between 0.0 and 1.0`);
         }
         return true;
     })
@@ -260,21 +296,32 @@ function writeToConfigFile(alacritty_config_to_write, original_config_path_dir) 
  * @returns Updated alacritty config
  */
 function editConfig(alacritty_old_config = {}, new_config, original_config_path_dir) {
-    var _a, _b, _c, _d, _e, _f, _g, _h;
-    // ! ISSUE: primary_bgcolor and fgcolor can be hexadecimal number also, so make that type possible
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
+    // ! ISSUE: primary_bgcolor and fgcolor and all other colors can be hexadecimal number also, so make that type possible
     // if old configs are there, then take that else leave alacritty to its default
     let old_bgcolor = (_c = (_b = (_a = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.colors) === null || _a === void 0 ? void 0 : _a.primary) === null || _b === void 0 ? void 0 : _b.background) !== null && _c !== void 0 ? _c : "";
     let old_fgcolor = (_f = (_e = (_d = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.colors) === null || _d === void 0 ? void 0 : _d.primary) === null || _e === void 0 ? void 0 : _e.foreground) !== null && _f !== void 0 ? _f : "";
     let old_fontsize = (_h = (_g = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.font) === null || _g === void 0 ? void 0 : _g.size) !== null && _h !== void 0 ? _h : undefined;
+    let old_selcolor = (_l = (_k = (_j = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.colors) === null || _j === void 0 ? void 0 : _j.selection) === null || _k === void 0 ? void 0 : _k.text) !== null && _l !== void 0 ? _l : "";
+    let old_cursor_style = (_o = (_m = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.cursor) === null || _m === void 0 ? void 0 : _m.style) !== null && _o !== void 0 ? _o : "Block";
+    let old_background_opacity = (_p = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.background_opacity) !== null && _p !== void 0 ? _p : undefined;
     // take all new config params, and fallback to old config if not provided
-    let { primary_bgcolor = old_bgcolor, primary_fgcolor = old_fgcolor, fontsize = old_fontsize } = new_config;
+    let { primary_bgcolor = old_bgcolor, primary_fgcolor = old_fgcolor, fontsize = old_fontsize, selection_fgcolor = old_selcolor, cursor_style = old_cursor_style, background_opacity = old_background_opacity } = new_config;
     // we will convert every string to hex code starting with 0x (if possible), to save in new config file
     // if the colors are empty or undefined, then return undefined from convertToHex
     // if the colors are not in correct format, throw error
     primary_bgcolor = convertToHex(primary_bgcolor);
     primary_fgcolor = convertToHex(primary_fgcolor);
+    selection_fgcolor = convertToHex(selection_fgcolor);
     if (fontsize < 0.1 || fontsize > 40.0) {
         throw new Error("Font size provided is not in the range 0.1 to 40.0");
+    }
+    // accepts any case (lower, upper, mixed) for Block, Underline, Beam
+    if (cursor_style && !(["Block", "Underline", "Beam"].includes(capitaliseString(cursor_style)))) {
+        throw new Error("Cursor style provided is not in one of the 3 accepted styles");
+    }
+    if (background_opacity < 0.0 || background_opacity > 1.0) {
+        throw new Error("Background opacity provided is not in the range 0.0 to 1.0");
     }
     // the config file only accepts hex codes starting with 0x
     const alacritty_updated_config = Object.assign(Object.assign({}, alacritty_old_config), { font: {
@@ -284,7 +331,12 @@ function editConfig(alacritty_old_config = {}, new_config, original_config_path_
                 background: primary_bgcolor,
                 foreground: primary_fgcolor,
             },
-        } });
+            selection: {
+                text: selection_fgcolor,
+            },
+        }, cursor: {
+            style: cursor_style,
+        }, background_opacity: background_opacity });
     writeToConfigFile(alacritty_updated_config, original_config_path_dir); // writing updated config to the original config path directory
     return alacritty_updated_config;
 }
@@ -302,9 +354,12 @@ function main() {
         let argumentInputs = takeArgumentInputs(alacritty_config);
         // if the arguments are not passed, it will take the old config only, and if config does not have that property, it will set defaults for that
         editConfig(alacritty_config, {
-            fontsize: parseFloat(argumentInputs.s),
+            fontsize: parseFloat("" + argumentInputs.s),
             primary_bgcolor: argumentInputs.b,
             primary_fgcolor: argumentInputs.c,
+            selection_fgcolor: argumentInputs.t,
+            cursor_style: argumentInputs.y,
+            background_opacity: parseFloat("" + argumentInputs.o),
         }, original_config_path_dir);
     }
     catch (err) {
@@ -318,4 +373,4 @@ if (((_a = (import.meta)) === null || _a === void 0 ? void 0 : _a.url) === fileU
     main();
 }
 
-export { configInit, convertShortToLongCode, convertToHash, convertToHex, editConfig, hash_color_regex, hex_color_regex, readOriginalConfig, takeArgumentInputs, writeToConfigFile };
+export { capitaliseString, configInit, convertShortToLongCode, convertToHash, convertToHex, editConfig, hash_color_regex, hex_color_regex, readOriginalConfig, takeArgumentInputs, writeToConfigFile };

@@ -22,9 +22,12 @@ function main(){
         // if the arguments are not passed, it will take the old config only, and if config does not have that property, it will set defaults for that
         
         editConfig(alacritty_config, {
-            fontsize: parseFloat(argumentInputs.s),
+            fontsize: parseFloat(""+argumentInputs.s), // if they are string or number, convert that to string then parse its numeric value
             primary_bgcolor: argumentInputs.b,
             primary_fgcolor: argumentInputs.c,
+            selection_fgcolor: argumentInputs.t,
+            cursor_style: argumentInputs.y,
+            background_opacity: parseFloat(""+argumentInputs.o),
         }, original_config_path_dir);
 
     } catch (err) {

@@ -7,6 +7,7 @@ import builtins from "builtin-modules"; // nodejs builtin modules like fs, os, c
 import { version as packageVersion } from './package.json';
 
 const dist_dir = 'dist';
+const shebang = '#!/usr/bin/env node';
 
 export default {
     input: 'output_tsc/index.js',
@@ -14,10 +15,12 @@ export default {
         {
             file: `${dist_dir}/cjs/bundle.cjs`,
             format: 'cjs',
+            banner: shebang,
         },
         {
             file: `${dist_dir}/esm/bundle.mjs`,
             format: 'esm',
+            banner: shebang,
         },
         {
             file: `${dist_dir}/esm/bundle.min.mjs`,

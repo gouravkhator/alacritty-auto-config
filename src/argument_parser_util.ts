@@ -1,4 +1,4 @@
-import yargs from 'yargs'; 
+import yargs from 'yargs';
 // changed from yargs/yargs to yargs as yargs/yargs is only in commonjs format and not exported as es modules
 import { hideBin } from 'yargs/helpers';
 
@@ -10,6 +10,14 @@ export const hash_color_regex = /^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/;
 // ! ISSUE: If the color code is 0x0.. then it gives error in yargs format
 // ! ISSUE: If color code is 0x000 then error is raised and program terminates unexpectedly.
 // ! ISSUE: If wrong params like -z or -f etc. are given, then give error
+
+export function capitaliseString(str: string): string|undefined {
+    if(!!str){
+        return str[0].toUpperCase() + str.substring(1).toLowerCase();
+    }else{
+        return undefined;
+    }
+}
 
 /**
  * Converts short color codes in 3 letter format to long color codes in 6 letter format.
@@ -133,10 +141,16 @@ export function takeArgumentInputs(alacritty_old_config: alacritty_config_struct
         s: string;
         b: string;
         c: string;
+        t: string;
+        y: string;
+        o: string;
     } = {
         s: 'fontsize',
         b: 'bgcolor',
         c: 'fgcolor',
+        t: 'selcolor', // selection text color
+        y: 'cursor', // cursor style
+        o: 'opacity', // background opacity
     };
 
     // provide optional default values (for fields you want to provide)
@@ -144,10 +158,16 @@ export function takeArgumentInputs(alacritty_old_config: alacritty_config_struct
         s?: number;
         b?: string;
         c?: string;
+        t?: string;
+        y?: string;
+        o?: number;
     } = {
-        s: 10,
-        b: '#333333',
-        c: '#ffffff',
+        s: 16,
+        b: '#111122',
+        c: '#ccccff',
+        t: '#111122',
+        y: "Block",
+        o: 1.0,
     }
 
     return yargs(hideBin(process.argv))
@@ -163,6 +183,9 @@ export function takeArgumentInputs(alacritty_old_config: alacritty_config_struct
         .alias('s', arg_keys.s)
         .alias('b', arg_keys.b)
         .alias('c', arg_keys.c)
+        .alias('t', arg_keys.t)
+        .alias('y', arg_keys.y)
+        .alias('o', arg_keys.o)
         .alias('h', 'help')
         .alias('v', 'version')
 
@@ -170,28 +193,37 @@ export function takeArgumentInputs(alacritty_old_config: alacritty_config_struct
         .default(arg_keys.s, alacritty_old_config?.font?.size ?? default_values.s)
         .default(arg_keys.b, alacritty_old_config?.colors?.primary?.background ?? default_values.b)
         .default(arg_keys.c, alacritty_old_config?.colors?.primary?.foreground ?? default_values.c)
+        .default(arg_keys.t, alacritty_old_config?.colors?.selection?.text ?? default_values.t)
+        .default(arg_keys.y, alacritty_old_config?.cursor?.style ?? default_values.y)
+        .default(arg_keys.o, alacritty_old_config?.background_opacity ?? default_values.o)
 
         // number of arguments
         .nargs({
             [arg_keys.s]: 1,
             [arg_keys.b]: 1,
             [arg_keys.c]: 1,
+            [arg_keys.t]: 1,
+            [arg_keys.y]: 1,
+            [arg_keys.o]: 1,
         })
 
         // description of options
         .describe(arg_keys.s, `Takes font size to be set in alacritty\t[default=${default_values.s}]`)
         .describe(arg_keys.b, `Takes primary background color in #ffffff or #fff or 0xfff or 0xffffff format\t[default=${default_values.b}]`)
         .describe(arg_keys.c, `Takes primary foreground color in #ffffff or #fff or 0xfff or 0xffffff format\t[default=${default_values.c}]`)
+        .describe(arg_keys.t, `Takes text color (when the area is selected) in #ffffff or #fff or 0xfff or 0xffffff format\t[default=${default_values.t}]`)
+        .describe(arg_keys.y, `Takes cursor style that can be Block or Underline or Beam\t[default=${default_values.y}]`)
+        .describe(arg_keys.o, `Takes background opacity which is between 0.0 (transparent) and 1.0 (opaque)\t[default=${default_values.o}]`)
 
         // conditional checks
         .check((argv) => {
-            // argv.anyproperty is a string and nothing else
-            if (argv.s && (parseFloat(argv.s) <= 0.0 || parseFloat(argv.s) > 40.0)) {
+
+            if (argv.s && (argv.s <= 0.0 || argv.s > 40.0)) {
                 throw new Error(`Wrong Arguments: Provided font size ${argv.s} should be within the range of display: 0.1 to 40.0`);
             }
 
             /* If the color is provided as 0x111 then its actually taken as hexadecimal number, so its typeof will be "number". 
-            
+
             But here, as b is a string in typescript. So the check of whether its a number input or not will never be possible. It will not be compiled.
 
             Same is the case with other colors.
@@ -202,6 +234,19 @@ export function takeArgumentInputs(alacritty_old_config: alacritty_config_struct
 
             if (argv.c && convertToHex(argv.c) === undefined) {
                 throw new Error(`Wrong Arguments: Provided font color ${argv.c} should be in hash or hex format`);
+            }
+
+            if (argv.t && convertToHex(argv.t) === undefined) {
+                throw new Error(`Wrong Arguments: Provided selection text color ${argv.t} should be in hash or hex format`);
+            }
+
+            // allowing any case for cursor style (lower, upper or mixed)
+            if (argv.y && !["Block", "Underline", "Beam"].includes(capitaliseString(""+argv.y))) {
+                throw new Error(`Wrong Arguments: Provided cursor style ${argv.y} should be in one of the 3 styles`);
+            }
+
+            if (argv.o && (argv.o < 0.0 || argv.o > 1.0)) {
+                throw new Error(`Wrong Arguments: Provided background opacity ${argv.o} should be between 0.0 and 1.0`);
             }
 
             return true;

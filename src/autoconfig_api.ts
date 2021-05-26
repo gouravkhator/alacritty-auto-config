@@ -4,7 +4,7 @@ import path from "path";
 import YAML from "yamljs";
 import { execSync } from "child_process";
 
-import { convertToHex } from "./argument_parser_util.js";
+import { capitaliseString, convertToHex } from "./argument_parser_util.js";
 import { alacritty_summarized_config_structure, alacritty_config_structure } from "./config_object_structures.js";
 
 /**
@@ -97,23 +97,36 @@ export function writeToConfigFile(alacritty_config_to_write: alacritty_config_st
  */
 export function editConfig(alacritty_old_config: alacritty_config_structure = {}, new_config: alacritty_summarized_config_structure, original_config_path_dir: string): alacritty_config_structure {
 
-    // ! ISSUE: primary_bgcolor and fgcolor can be hexadecimal number also, so make that type possible
+    // ! ISSUE: primary_bgcolor and fgcolor and all other colors can be hexadecimal number also, so make that type possible
     // if old configs are there, then take that else leave alacritty to its default
     let old_bgcolor = alacritty_old_config?.colors?.primary?.background ?? "";
     let old_fgcolor = alacritty_old_config?.colors?.primary?.foreground ?? "";
     let old_fontsize = alacritty_old_config?.font?.size ?? undefined;
+    let old_selcolor = alacritty_old_config?.colors?.selection?.text ?? "";
+    let old_cursor_style = alacritty_old_config?.cursor?.style ?? "Block";
+    let old_background_opacity = alacritty_old_config?.background_opacity ?? undefined;
 
     // take all new config params, and fallback to old config if not provided
-    let { primary_bgcolor = old_bgcolor, primary_fgcolor = old_fgcolor, fontsize = old_fontsize } = new_config;
+    let { primary_bgcolor = old_bgcolor, primary_fgcolor = old_fgcolor, fontsize = old_fontsize, selection_fgcolor = old_selcolor, cursor_style = old_cursor_style, background_opacity = old_background_opacity } = new_config;
 
     // we will convert every string to hex code starting with 0x (if possible), to save in new config file
     // if the colors are empty or undefined, then return undefined from convertToHex
     // if the colors are not in correct format, throw error
     primary_bgcolor = convertToHex(primary_bgcolor);
     primary_fgcolor = convertToHex(primary_fgcolor);
+    selection_fgcolor = convertToHex(selection_fgcolor);
 
     if (fontsize < 0.1 || fontsize > 40.0) {
-        throw new Error("Font size provided is not in the range 0.1 to 40.0")
+        throw new Error("Font size provided is not in the range 0.1 to 40.0");
+    }
+
+    // accepts any case (lower, upper, mixed) for Block, Underline, Beam
+    if(cursor_style && !(["Block", "Underline", "Beam"].includes(capitaliseString(cursor_style)))){
+        throw new Error("Cursor style provided is not in one of the 3 accepted styles");
+    }
+
+    if (background_opacity < 0.0 || background_opacity > 1.0) {
+        throw new Error("Background opacity provided is not in the range 0.0 to 1.0");
     }
 
     // the config file only accepts hex codes starting with 0x
@@ -127,7 +140,14 @@ export function editConfig(alacritty_old_config: alacritty_config_structure = {}
                 background: primary_bgcolor,
                 foreground: primary_fgcolor,
             },
+            selection: {
+                text: selection_fgcolor,
+            },
         },
+        cursor: {
+            style: cursor_style,
+        },
+        background_opacity: background_opacity,
     };
 
     writeToConfigFile(alacritty_updated_config, original_config_path_dir); // writing updated config to the original config path directory

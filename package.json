@@ -27,7 +27,8 @@
   "scripts": {
     "prebuild": "rimraf dist/ output_tsc/ types/",
     "build": "tsc && rollup -c",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "generate-binary": "pkg ."
   },
   "keywords": [
     "alacritty",
