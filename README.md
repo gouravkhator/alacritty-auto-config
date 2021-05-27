@@ -137,3 +137,18 @@ The esm/index.js will work as my package.json contains "type": "module".
 * keywords - Basic keywords for the npm package
 
 Other things are normal for any npm package like repository for specifying remote git repository link, bugs for specifying remote git repository bugs and issues link, homepage for specifying either the README.md file link or the actual website link for the package homepage.
+
+### Publish to npm
+
+For publishing patch, first check if the git working directory is clean and committed and not dirty or modified. Then run the below commands:
+```sh
+npm version patch
+```
+
+As the package uses rollup and shows version in the CLI, so it will have to be built to dist/ folder after version change in package.json. Run :
+
+```sh
+npm run build
+```
+
+This will modify the dist files. Now, commit the changes and push to remote repo.
