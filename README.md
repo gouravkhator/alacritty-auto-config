@@ -120,9 +120,9 @@ The esm/index.js will work as my package.json contains "type": "module".
 * main - Describes the main script file (which will work as a fallback if exports field cannot be processed by the older nodejs)
 * type - Tells npm what module to assume to run a .js file. For .mjs or .cjs, nodejs should choose their respesctive type (es module or commonjs). 
 * exports - Tells that this package will export:
-    * dist/esm/.js file if this package is imported as import
-    * dist/cjs/.js file if this package is imported as require statements
-    * minified .js file elsewhere.
+    * `dist/esm/.js` file if this package is imported as import
+    * `dist/cjs/.js` file if this package is imported as require statements
+    * `minified .js` file elsewhere.
 * bin - Gives cli commands and their respective js file to run when the particular command is invoked.
 * pkg - An npm package which can generate executables out of npm packages. Here, we specify:
     * assets to be node_modules files
