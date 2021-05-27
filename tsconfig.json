@@ -9,11 +9,11 @@
         "sourceMap": true,
         "declaration": true,
         "declarationMap": true,
-        "declarationDir": "types",
+        "declarationDir": "dist/types",
         "allowJs": true,
         "resolveJsonModule": true,
         "lib": [
-            "ES5",
+            "ESNext",
         ],
         "moduleResolution": "node",
         "esModuleInterop": true,

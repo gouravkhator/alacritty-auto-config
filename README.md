@@ -70,7 +70,13 @@ npm install
 npm run build
 ```
 
-**Note: This will also build the binary files for each major OS platforms.** All the executables will be present in the dist/exec folder.
+### Generate executables
+
+```sh
+npm run generate-binary
+```
+
+**Make sure, the built code is already present in dist folder. The generate-binary script will generate the binary files for each major OS platforms.** All the executables will be present in the dist/bin folder.
 
 ### Run the development watch mode
 
@@ -88,20 +94,22 @@ The above options and values are also valid if you build the project yourself, a
 
 Run the below scripts from the project root folder:
 ```sh
-node dist/esm/bundle.mjs [options]=[values]
+node dist/esm/index.js [options]=[values]
 ```
 Or,
 ```sh
-node dist/cjs/bundle.cjs [options]=[values]
+node dist/cjs/index.js [options]=[values]
 ```
 
-The cjs and mjs files both work, after you have built the project.
+Note: Change the "type": "commonjs" in package.json. The cjs/index.js will work provided your package.json has type: "commonjs" or nothing is specified for type field. 
+
+The esm/index.js will work as my package.json contains "type": "module".
 
 ### All bundles
 
-- `dist/cjs/bundle.cjs` CommonJS module.
-- `dist/esm/bundle.mjs` EcmaScript module.
-- `dist/esm/bundle.min.mjs` Minified EcmaScript module.
+- `dist/cjs/index.js` CommonJS module.
+- `dist/esm/index.js` EcmaScript module.
+- `dist/esm/index.min.js` Minified EcmaScript module.
 <!-- - `dist/cjs-compat/index.js` CommonJS module, transpiled for older browsers. -->
 <!-- - `dist/bundle.esm-compact.mjs` EcmaScript module, transpiled for older browsers. -->
 <!-- - `dist/bundle.iife.min.js` Minified plain JS. -->
@@ -109,21 +117,23 @@ The cjs and mjs files both work, after you have built the project.
 
 ### package.json Explanation
 
-* main - Describes the main script file
-* type - Tells npm that nodejs should run any .js file as a module. For .mjs or .cjs, nodejs should choose their respesctive type (es module or commonjs). 
+* main - Describes the main script file (which will work as a fallback if exports field cannot be processed by the older nodejs)
+* type - Tells npm what module to assume to run a .js file. For .mjs or .cjs, nodejs should choose their respesctive type (es module or commonjs). 
 * exports - Tells that this package will export:
-    * .mjs file if this package is imported as import
-    * .cjs file if this package is imported as require statements
-    * minified .mjs file elsewhere.
+    * dist/esm/.js file if this package is imported as import
+    * dist/cjs/.js file if this package is imported as require statements
+    * minified .js file elsewhere.
 * bin - Gives cli commands and their respective js file to run when the particular command is invoked.
 * pkg - An npm package which can generate executables out of npm packages. Here, we specify:
     * assets to be node_modules files
     * targets to be operating system environments
-    * output path to be dist/exec folder for all generated executables.
+    * output path to be dist/bin folder for all generated executables.
 * scripts - Normal NPM scripts.
     * prebuild - Runs before actual build script
     * build - Builds the folders for distribution
     * dev - Watch mode for typescript files
+    * generate-binary - Generates executables for major OS platforms.
+    * postbuild - Clean up after running build script
 * keywords - Basic keywords for the npm package
 
 Other things are normal for any npm package like repository for specifying remote git repository link, bugs for specifying remote git repository bugs and issues link, homepage for specifying either the README.md file link or the actual website link for the package homepage.
