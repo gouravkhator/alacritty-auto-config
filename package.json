@@ -2,16 +2,16 @@
   "name": "alacritty-auto-config",
   "version": "1.1.0",
   "description": "Auto Configuration Library for Alacritty Terminal Emulator",
-  "main": "./dist/esm/index.js",
-  "type": "module",
+  "main": "./dist/cjs/index.cjs",
+  "module": "./dist/esm/index.mjs",
   "exports": {
-    "import": "./dist/esm/index.js",
-    "require": "./dist/cjs/index.js",
-    "default": "./dist/esm/index.min.js"
+    "require": "./dist/cjs/index.cjs",
+    "import": "./dist/esm/index.mjs"
   },
+  "types": "./dist/esm/index.d.ts",
   "bin": {
-    "alacritty-auto-config": "./dist/cjs/index.js",
-    "aac": "./dist/cjs/index.js"
+    "alacritty-auto-config": "./dist/cjs/index.cjs",
+    "aac": "./dist/cjs/index.cjs"
   },
   "pkg": {
     "assets": [

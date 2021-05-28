@@ -16,17 +16,17 @@ export default [
         input: 'output_tsc/index.js',
         output: [
             {
-                file: `${dist_dir}/cjs/index.js`,
+                file: `${dist_dir}/cjs/index.cjs`,
                 format: 'cjs',
                 banner: shebang,
             },
             {
-                file: `${dist_dir}/esm/index.js`,
+                file: `${dist_dir}/esm/index.mjs`,
                 format: 'esm',
                 banner: shebang,
             },
             {
-                file: `${dist_dir}/esm/index.min.js`,
+                file: `${dist_dir}/esm/index.min.mjs`,
                 format: 'esm',
                 plugins: [terser()], // terser is for minification of esm bundle
             },

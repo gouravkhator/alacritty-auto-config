@@ -6,7 +6,7 @@ This is a small npm library which is used to automatically configure Alacritty b
 
 ### Install the npm package
 
-**Sorry, but the global install is having some issues, I am working on that. If you can contribute, it will be of great help to me. I accept PRs.**
+**Sorry, but the global/local bin commands are having some issues, I am working on that. If you can contribute, it will be of great help to me. I accept PRs.**
 
 Install the package globally:
 ```sh
@@ -94,22 +94,18 @@ The above options and values are also valid if you build the project yourself, a
 
 Run the below scripts from the project root folder:
 ```sh
-node dist/esm/index.js [options]=[values]
+node dist/esm/index.mjs [options]=[values]
 ```
 Or,
 ```sh
-node dist/cjs/index.js [options]=[values]
+node dist/cjs/index.cjs [options]=[values]
 ```
-
-Note: Change the "type": "commonjs" in package.json. The cjs/index.js will work provided your package.json has type: "commonjs" or nothing is specified for type field. 
-
-The esm/index.js will work as my package.json contains "type": "module".
 
 ### All bundles
 
-- `dist/cjs/index.js` CommonJS module.
-- `dist/esm/index.js` EcmaScript module.
-- `dist/esm/index.min.js` Minified EcmaScript module.
+- `dist/cjs/index.cjs` CommonJS module.
+- `dist/esm/index.mjs` EcmaScript module.
+- `dist/esm/index.min.mjs` Minified EcmaScript module.
 <!-- - `dist/cjs-compat/index.js` CommonJS module, transpiled for older browsers. -->
 <!-- - `dist/bundle.esm-compact.mjs` EcmaScript module, transpiled for older browsers. -->
 <!-- - `dist/bundle.iife.min.js` Minified plain JS. -->
@@ -117,12 +113,12 @@ The esm/index.js will work as my package.json contains "type": "module".
 
 ### package.json Explanation
 
-* main - Describes the main script file (which will work as a fallback if exports field cannot be processed by the older nodejs)
-* type - Tells npm what module to assume to run a .js file. For .mjs or .cjs, nodejs should choose their respesctive type (es module or commonjs). 
+* main - Path of the main script file (which will work as a fallback if exports field cannot be processed by the older nodejs)
+* module - Path of the module script file (if exports field could not be processed and the package uses import statements).
 * exports - Tells that this package will export:
-    * `dist/esm/.js` file if this package is imported as import
-    * `dist/cjs/.js` file if this package is imported as require statements
-    * `minified .js` file elsewhere.
+    * ESM folder's file if this package is imported as import
+    * CJS folder's file if this package is imported as require statements
+* types - Tells npm to look for the type declarations at the given file path in types field.
 * bin - Gives cli commands and their respective js file to run when the particular command is invoked.
 * pkg - An npm package which can generate executables out of npm packages. Here, we specify:
     * assets to be node_modules files
@@ -135,6 +131,8 @@ The esm/index.js will work as my package.json contains "type": "module".
     * generate-binary - Generates executables for major OS platforms.
     * postbuild - Clean up after running build script
 * keywords - Basic keywords for the npm package
+
+Note: type field is not specified as the dist files are given extensions .cjs or .mjs. And, my internal files does not require type: module or commonjs as those are also given .cjs or .mjs extensions.
 
 Other things are normal for any npm package like repository for specifying remote git repository link, bugs for specifying remote git repository bugs and issues link, homepage for specifying either the README.md file link or the actual website link for the package homepage.
 

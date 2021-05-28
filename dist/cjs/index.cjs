@@ -381,7 +381,7 @@ function main() {
 const fileURL = new url.URL(`file://${process.argv[1]}`);
 // converting the path to URL as this will make the valid url out of it, like replace space with %20, or some special characters with some codes
 // Only run main() when the file is run from cli
-if (((_a = (({ url: (typeof document === 'undefined' ? new (require('u' + 'rl').URL)('file:' + __filename).href : (document.currentScript && document.currentScript.src || new URL('index.js', document.baseURI).href)) }))) === null || _a === void 0 ? void 0 : _a.url) === fileURL.toString()) {
+if (((_a = (({ url: (typeof document === 'undefined' ? new (require('u' + 'rl').URL)('file:' + __filename).href : (document.currentScript && document.currentScript.src || new URL('index.cjs', document.baseURI).href)) }))) === null || _a === void 0 ? void 0 : _a.url) === fileURL.toString()) {
     main();
 }
 
