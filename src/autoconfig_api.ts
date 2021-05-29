@@ -4,7 +4,9 @@ import path from "path";
 import YAML from "yamljs";
 import { execSync } from "child_process";
 
-import { capitaliseString, convertToHex } from "./argument_parser_util.js";
+import { convertToHex } from "./argument_parser_util.js";
+import { capitaliseString } from "./utils/internals.js";
+
 import { alacritty_summarized_config_structure, alacritty_config_structure } from "./config_object_structures.js";
 
 /**
@@ -97,7 +99,6 @@ export function writeToConfigFile(alacritty_config_to_write: alacritty_config_st
  */
 export function editConfig(alacritty_old_config: alacritty_config_structure = {}, new_config: alacritty_summarized_config_structure, original_config_path_dir: string): alacritty_config_structure {
 
-    // ! ISSUE: primary_bgcolor and fgcolor and all other colors can be hexadecimal number also, so make that type possible
     // if old configs are there, then take that else leave alacritty to its default
     let old_bgcolor = alacritty_old_config?.colors?.primary?.background ?? "";
     let old_fgcolor = alacritty_old_config?.colors?.primary?.foreground ?? "";

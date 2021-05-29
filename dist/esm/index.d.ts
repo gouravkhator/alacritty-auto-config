@@ -70,15 +70,46 @@ declare function editConfig(alacritty_old_config: alacritty_config_structure, ne
 
 declare const hex_color_regex: RegExp;
 declare const hash_color_regex: RegExp;
-declare function capitaliseString(str: string): string | undefined;
 /**
  * Converts short color codes in 3 letter format to long color codes in 6 letter format.
  *
  * @param color_code Color code in # or 0x format, without prefix. Ex:- for color '#fff', color_code will be passed as 'fff'
  * @returns Color code which is expanded to 6 digits, if it was initially 3 digits long
+ * @throwsError if Color code is not provided in correct format
  */
 declare function convertShortToLongCode(color_code: string): string;
 /**
+ * Converts color code into # format in string like '#f12ef3'
+ *
+ * @param color_code Color code with prefix as # or 0x in string format (Eg: '#fff' or '0xfff').
+ *
+ * 3 or 6 letters color codes are accepted.
+ * @returns 6 letter Color code with prefix as # in string format.
+ * @returns undefined, if the provided color code is empty or undefined
+ * @throwsError if Color code is not provided in correct format
+ */
+declare function convertToHash(color_code: string): string | undefined;
+/**
+ * Converts color code into 0x format in string like '0xf12ef3'
+ *
+ * @param color_code Color code with prefix as # or 0x in string format (Eg: '#fff' or '0xfff')
+ *
+ * 3 or 6 letters color codes are accepted.
+ * @returns 6 letter Color code with prefix as 0x in string format.
+ * @returns undefined, if the provided color code is empty or undefined
+ * @throwsError if Color code is not provided in correct format
+ */
+declare function convertToHex(color_code: string): string | undefined;
+/**
+ * Takes argument inputs for the alacritty configuration.
+ *
+ * @param alacritty_old_config Alacritty old config object with params (if it exists)
+ * @returns Argument Inputs object with all properties taken as input from the user
+ */
+declare function takeArgumentInputs(alacritty_old_config?: alacritty_config_structure): any;
+/**
+ * @deprecated - since version 1.2.0. Use convertToHash function
+ *
  * Converts color code into # format in string like '#f12ef3'
  *
  * @param color_code Color code with prefix as # or 0x in string format (Eg: '#fff' or '0xfff').
@@ -90,8 +121,10 @@ declare function convertShortToLongCode(color_code: string): string;
  * @returns undefined, if the provided color code is empty or undefined
  * @throwsError if Color code is not provided in correct format
  */
-declare function convertToHash(color_code: string | number): string | undefined;
+declare function oldConvertToHash(color_code: string | number): string | undefined;
 /**
+ * @deprecated - since version 1.2.0. Use convertToHex function
+ *
  * Converts color code into 0x format in string like '0xf12ef3'
  *
  * @param color_code Color code with prefix as # or 0x in string format (Eg: '#fff' or '0xfff')
@@ -103,13 +136,6 @@ declare function convertToHash(color_code: string | number): string | undefined;
  * @returns undefined, if the provided color code is empty or undefined
  * @throwsError if Color code is not provided in correct format
  */
-declare function convertToHex(color_code: string | number): string | undefined;
-/**
- * Takes argument inputs for the alacritty configuration.
- *
- * @param alacritty_old_config Alacritty old config object with params (if it exists)
- * @returns Argument Inputs object with all properties taken as input from the user
- */
-declare function takeArgumentInputs(alacritty_old_config?: alacritty_config_structure): any;
+declare function oldConvertToHex(color_code: string | number): string | undefined;
 
-export { capitaliseString, configInit, convertShortToLongCode, convertToHash, convertToHex, editConfig, hash_color_regex, hex_color_regex, readOriginalConfig, takeArgumentInputs, writeToConfigFile };
+export { configInit, convertShortToLongCode, convertToHash, convertToHex, editConfig, hash_color_regex, hex_color_regex, oldConvertToHash, oldConvertToHex, readOriginalConfig, takeArgumentInputs, writeToConfigFile };

@@ -55,9 +55,12 @@ aac --help
 * Options:
 
 ```sh
--s, --fontsize: Takes font size to be set in alacritty (default: 10)
+-s, --fontsize: Takes font size to be set in alacritty (default=10)
 -b, --bgcolor: Takes primary background color in '#xxxxxx' or '#xxx' or '0xfff' or '0xffffff' format (default='#333333')
 -c, --fgcolor: Takes primary foreground color in '#xxxxxx' or '#xxx' or '0xfff' or '0xffffff' format (default='#ffffff')
+-t, --selcolor: Takes text color (when the area is selected) in '#ffffff' or '#fff' or '0xfff' or '0xffffff' format (default='#111122')
+-y, --cursor: Takes cursor style that can be Block or Underline or Beam (default=Block)
+-o, --opacity: Takes background opacity which is between 0.0 (transparent) and 1.0 (opaque) (default=1)
 -v, --version: Show version number
 ```
 
@@ -111,7 +114,9 @@ node dist/cjs/index.cjs [options]=[values]
 <!-- - `dist/bundle.iife.min.js` Minified plain JS. -->
 <!-- - `dist/bundle.iife-compact.js` As above, but transpiled for older browsers. -->
 
-### package.json Explanation
+### package.json Explanation 
+
+**Note: It may be outdated, so check the main package.json for latest configs**
 
 * main - Path of the main script file (which will work as a fallback if exports field cannot be processed by the older nodejs)
 * module - Path of the module script file (if exports field could not be processed and the package uses import statements).
@@ -131,8 +136,6 @@ node dist/cjs/index.cjs [options]=[values]
     * generate-binary - Generates executables for major OS platforms.
     * postbuild - Clean up after running build script
 * keywords - Basic keywords for the npm package
-
-Note: type field is not specified as the dist files are given extensions .cjs or .mjs. And, my internal files does not require type: module or commonjs as those are also given .cjs or .mjs extensions.
 
 Other things are normal for any npm package like repository for specifying remote git repository link, bugs for specifying remote git repository bugs and issues link, homepage for specifying either the README.md file link or the actual website link for the package homepage.
 

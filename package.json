@@ -4,6 +4,7 @@
   "description": "Auto Configuration Library for Alacritty Terminal Emulator",
   "main": "./dist/cjs/index.cjs",
   "module": "./dist/esm/index.mjs",
+  "type": "module",
   "exports": {
     "require": "./dist/cjs/index.cjs",
     "import": "./dist/esm/index.mjs"
@@ -39,10 +40,7 @@
     "cli",
     "api"
   ],
-  "author": {
-    "name": "Gourav Khator",
-    "email": "gouravkhator10@gmail.com"
-  },
+  "author": "Gourav Khator",
   "license": "MIT",
   "devDependencies": {
     "@rollup/plugin-json": "^4.1.0",
