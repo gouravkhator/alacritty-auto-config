@@ -159,7 +159,7 @@ function takeArgumentInputs(alacritty_old_config = {}) {
         // .demandOption(['s', 'b', 'c']) // to set them required, but as I am setting defaults so its optional
         // options
         .help('h')
-        .version("1.1.2") // the version is replaced in rollup build process
+        .version("1.2.0") // the version is replaced in rollup build process
         // aliases
         .alias('s', arg_keys.s)
         .alias('b', arg_keys.b)
