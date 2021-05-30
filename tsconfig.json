@@ -2,7 +2,7 @@
     "compilerOptions": {
         "module": "esnext",
         "target": "ES2015",
-        "noImplicitAny": true,
+        // "noImplicitAny": true,
         "noEmitOnError": true,
         "preserveConstEnums": true,
         "outDir": "output_tsc",

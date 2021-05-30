@@ -11,6 +11,7 @@ var os = require('os');
 var fs = require('fs');
 var YAML = require('yamljs');
 var child_process = require('child_process');
+var JSON2YML = require('json2yaml');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -19,6 +20,7 @@ var yargs__default = /*#__PURE__*/_interopDefaultLegacy(yargs);
 var os__default = /*#__PURE__*/_interopDefaultLegacy(os);
 var fs__default = /*#__PURE__*/_interopDefaultLegacy(fs);
 var YAML__default = /*#__PURE__*/_interopDefaultLegacy(YAML);
+var JSON2YML__default = /*#__PURE__*/_interopDefaultLegacy(JSON2YML);
 
 /**
  *
@@ -184,12 +186,12 @@ function takeArgumentInputs(alacritty_old_config = {}) {
         [arg_keys.o]: 1,
     })
         // description of options
-        .describe(arg_keys.s, `Takes font size to be set in alacritty\t[default=${default_values.s}]`)
-        .describe(arg_keys.b, `Takes primary background color in #ffffff or #fff or 0xfff or 0xffffff format\t[default=${default_values.b}]`)
-        .describe(arg_keys.c, `Takes primary foreground color in #ffffff or #fff or 0xfff or 0xffffff format\t[default=${default_values.c}]`)
-        .describe(arg_keys.t, `Takes text color (when the area is selected) in #ffffff or #fff or 0xfff or 0xffffff format\t[default=${default_values.t}]`)
-        .describe(arg_keys.y, `Takes cursor style that can be Block or Underline or Beam\t[default=${default_values.y}]`)
-        .describe(arg_keys.o, `Takes background opacity which is between 0.0 (transparent) and 1.0 (opaque)\t[default=${default_values.o}]`)
+        .describe(arg_keys.s, `Takes font size to be set in alacritty [default=${default_values.s}]`)
+        .describe(arg_keys.b, `Takes primary background color in #ffffff or #fff or 0xfff or 0xffffff format [default=${default_values.b}]`)
+        .describe(arg_keys.c, `Takes primary foreground color in #ffffff or #fff or 0xfff or 0xffffff format [default=${default_values.c}]`)
+        .describe(arg_keys.t, `Takes text color (when the area is selected) in #ffffff or #fff or 0xfff or 0xffffff format [default=${default_values.t}]`)
+        .describe(arg_keys.y, `Takes cursor style that can be Block or Underline or Beam [default=${default_values.y}]`)
+        .describe(arg_keys.o, `Takes background opacity which is between 0.0 (transparent) and 1.0 (opaque) [default=${default_values.o}]`)
         // conditional checks
         .check((argv) => {
         if (argv.s && (argv.s <= 0.0 || argv.s > 40.0)) {
@@ -316,10 +318,11 @@ function configInit() {
     if (os__default['default'].type() === 'Windows_NT') {
         // The path for alacritty config is %APPDATA%\alacritty\alacritty.yml
         // TODO: I can code up this if windows users can confirm the working
-        throw new Error("Platform win32 not supported by our app");
+        throw new Error("Platform win32 is currently not supported by our app");
     }
     // check if alacritty is installed or not
     try {
+        // TODO: which command will not work on windows, the equivalent command is `where <command-name>`
         child_process.execSync('which alacritty');
     }
     catch (err) {
@@ -358,19 +361,19 @@ function readOriginalConfig(original_config_path) {
  * @param original_config_path_dir Absolute Path for the original alacritty config directory (Ex- /home/gourav/.config/alacritty/)
  */
 function writeToConfigFile(alacritty_config_to_write, original_config_path_dir) {
-    // const temp_config_dir = 'user_config_temp';
-    const temp_config_dir = path__default['default'].join(original_config_path_dir, 'user_config_temp');
-    const json_file_path = path__default['default'].resolve(temp_config_dir, 'alacritty.json');
-    // mkdir recursively if it does not exists
-    fs__default['default'].mkdirSync(temp_config_dir, { recursive: true });
-    // write to json
-    fs__default['default'].writeFileSync(json_file_path, JSON.stringify(alacritty_config_to_write), 'utf8');
-    /*
-    First, convert json to yaml and then rename that yaml to yml, then cp that yml file to the original config folder and finally remove the temp config folder created. I have written all paths within single quotes as the path can have spaces also.
-    */
-    const write_command = `npx json2yaml '${json_file_path}' --save -d 8 && mv '${path__default['default'].resolve(temp_config_dir, 'alacritty.yaml')}' '${path__default['default'].resolve(temp_config_dir, 'alacritty.yml')}' && cp '${path__default['default'].resolve(temp_config_dir, 'alacritty.yml')}' '${original_config_path_dir}' && rm -rf ${temp_config_dir}`;
-    child_process.execSync(write_command);
-    console.log('Please close and reopen all windows of alacritty if some effects were not applied..');
+    try {
+        const temp_config_dir = path__default['default'].join(original_config_path_dir, 'user_config_temp');
+        const yml_file_path = path__default['default'].resolve(original_config_path_dir, 'alacritty.yml');
+        // mkdir recursively if it does not exists
+        fs__default['default'].mkdirSync(temp_config_dir, { recursive: true });
+        const yml_str = JSON2YML__default['default'].stringify(alacritty_config_to_write); // takes json and converts to yml format
+        fs__default['default'].writeFileSync(yml_file_path, yml_str, 'utf-8'); // write the yml str to the file
+        console.log('Please close and reopen all windows of alacritty if some effects were not applied..');
+    }
+    catch (err) {
+        console.log('Sorry, some error occurred while writing configurations to the alacritty.yml file');
+        console.error(err);
+    }
 }
 /**
  * Edits the old config object with the new config parameters, and writes that updated config to the original config path directory as taken in the parameters

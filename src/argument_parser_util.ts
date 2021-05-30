@@ -187,12 +187,12 @@ export function takeArgumentInputs(alacritty_old_config: alacritty_config_struct
         })
 
         // description of options
-        .describe(arg_keys.s, `Takes font size to be set in alacritty\t[default=${default_values.s}]`)
-        .describe(arg_keys.b, `Takes primary background color in #ffffff or #fff or 0xfff or 0xffffff format\t[default=${default_values.b}]`)
-        .describe(arg_keys.c, `Takes primary foreground color in #ffffff or #fff or 0xfff or 0xffffff format\t[default=${default_values.c}]`)
-        .describe(arg_keys.t, `Takes text color (when the area is selected) in #ffffff or #fff or 0xfff or 0xffffff format\t[default=${default_values.t}]`)
-        .describe(arg_keys.y, `Takes cursor style that can be Block or Underline or Beam\t[default=${default_values.y}]`)
-        .describe(arg_keys.o, `Takes background opacity which is between 0.0 (transparent) and 1.0 (opaque)\t[default=${default_values.o}]`)
+        .describe(arg_keys.s, `Takes font size to be set in alacritty [default=${default_values.s}]`)
+        .describe(arg_keys.b, `Takes primary background color in #ffffff or #fff or 0xfff or 0xffffff format [default=${default_values.b}]`)
+        .describe(arg_keys.c, `Takes primary foreground color in #ffffff or #fff or 0xfff or 0xffffff format [default=${default_values.c}]`)
+        .describe(arg_keys.t, `Takes text color (when the area is selected) in #ffffff or #fff or 0xfff or 0xffffff format [default=${default_values.t}]`)
+        .describe(arg_keys.y, `Takes cursor style that can be Block or Underline or Beam [default=${default_values.y}]`)
+        .describe(arg_keys.o, `Takes background opacity which is between 0.0 (transparent) and 1.0 (opaque) [default=${default_values.o}]`)
 
         // conditional checks
         .check((argv) => {

@@ -54,7 +54,7 @@ export default [
                 // Ex- let x = '{{version}}', then x will be {{version}} and not some version no.
             })],
 
-        external: [...builtins, 'yargs', 'yargs/helpers', 'yamljs'], // builtin nodejs modules and other external modules
+        external: [...builtins, 'yargs', 'yargs/helpers', 'yamljs', 'json2yaml'], // builtin nodejs modules and other external modules
         context: 'globalThis', // this was written as undefined so setting context to globalThis,
     },
     // for bundling all d.ts types files to one type declaration files

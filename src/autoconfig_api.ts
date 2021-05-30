@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import YAML from "yamljs";
 import { execSync } from "child_process";
+import JSON2YML from 'json2yaml';
 
 import { convertToHex } from "./argument_parser_util.js";
 import { capitaliseString } from "./utils/internals.js";
@@ -22,11 +23,12 @@ export function configInit(): string {
     if (os.type() === 'Windows_NT') {
         // The path for alacritty config is %APPDATA%\alacritty\alacritty.yml
         // TODO: I can code up this if windows users can confirm the working
-        throw new Error("Platform win32 not supported by our app");
+        throw new Error("Platform win32 is currently not supported by our app");
     }
 
     // check if alacritty is installed or not
     try {
+        // TODO: which command will not work on windows, the equivalent command is `where <command-name>`
         execSync('which alacritty');
     } catch (err: any) {
         throw new Error("Package Not Installed: alacritty is not installed in your system or it's path is not set in your PATH variable, so you cannot use our library..");
@@ -68,24 +70,22 @@ export function readOriginalConfig(original_config_path: string): alacritty_conf
  * @param original_config_path_dir Absolute Path for the original alacritty config directory (Ex- /home/gourav/.config/alacritty/)
  */
 export function writeToConfigFile(alacritty_config_to_write: alacritty_config_structure, original_config_path_dir: string) {
-    // const temp_config_dir = 'user_config_temp';
-    const temp_config_dir = path.join(original_config_path_dir, 'user_config_temp');
+    try {
+        const temp_config_dir = path.join(original_config_path_dir, 'user_config_temp');
+        const yml_file_path = path.resolve(original_config_path_dir, 'alacritty.yml');
 
-    const json_file_path = path.resolve(temp_config_dir, 'alacritty.json');
+        // mkdir recursively if it does not exists
+        fs.mkdirSync(temp_config_dir, { recursive: true });
 
-    // mkdir recursively if it does not exists
-    fs.mkdirSync(temp_config_dir, { recursive: true });
-
-    // write to json
-    fs.writeFileSync(json_file_path, JSON.stringify(alacritty_config_to_write), 'utf8');
-
-    /*
-    First, convert json to yaml and then rename that yaml to yml, then cp that yml file to the original config folder and finally remove the temp config folder created. I have written all paths within single quotes as the path can have spaces also.
-    */
-    const write_command: string = `npx json2yaml '${json_file_path}' --save -d 8 && mv '${path.resolve(temp_config_dir, 'alacritty.yaml')}' '${path.resolve(temp_config_dir, 'alacritty.yml')}' && cp '${path.resolve(temp_config_dir, 'alacritty.yml')}' '${original_config_path_dir}' && rm -rf ${temp_config_dir}`;
-
-    execSync(write_command);
-    console.log('Please close and reopen all windows of alacritty if some effects were not applied..');
+        const yml_str = JSON2YML.stringify(alacritty_config_to_write); // takes json and converts to yml format
+        
+        fs.writeFileSync(yml_file_path, yml_str, 'utf-8'); // write the yml str to the file
+        
+        console.log('Please close and reopen all windows of alacritty if some effects were not applied..');
+    } catch (err: any) {
+        console.log('Sorry, some error occurred while writing configurations to the alacritty.yml file');
+        console.error(err);
+    }
 }
 
 /**

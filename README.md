@@ -8,6 +8,8 @@ This is a small npm library which is used to automatically configure Alacritty b
 
 **Sorry, but the global/local bin commands are having some issues, I am working on that. If you can contribute, it will be of great help to me. I accept PRs.**
 
+For windows users, I have intentionally not added functionality and if you run my package it would show the error : platform not supported. In future versions, I would add that part.
+
 Install the package globally:
 ```sh
 npm install -g alacritty-auto-config
@@ -126,7 +128,6 @@ node dist/cjs/index.cjs [options]=[values]
 * types - Tells npm to look for the type declarations at the given file path in types field.
 * bin - Gives cli commands and their respective js file to run when the particular command is invoked.
 * pkg - An npm package which can generate executables out of npm packages. Here, we specify:
-    * assets to be node_modules files
     * targets to be operating system environments
     * output path to be dist/bin folder for all generated executables.
 * scripts - Normal NPM scripts.
