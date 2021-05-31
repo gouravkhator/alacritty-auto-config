@@ -8,7 +8,7 @@ This is a small npm library which is used to automatically configure Alacritty b
 
 **Sorry, but the global/local bin commands are having some issues, I am working on that. If you can contribute, it will be of great help to me. I accept PRs.**
 
-For windows users, I have intentionally not added functionality and if you run my package it would show the error : platform not supported. In future versions, I would add that part.
+For windows users, please run the package, to see if the configurations actually work or not. I am unable to test it out in windows.
 
 Install the package globally:
 ```sh
@@ -81,7 +81,7 @@ npm run build
 npm run generate-binary
 ```
 
-**Make sure, the built code is already present in dist folder. The generate-binary script will generate the binary files for each major OS platforms.** All the executables will be present in the dist/bin folder.
+**The generate-binary script will build the dist folder and generate the binary files for each major OS platforms.** All the executables will be present in the dist/bin folder.
 
 ### Run the development watch mode
 
@@ -150,7 +150,7 @@ npm version patch
 As the package uses rollup and shows version in the CLI, so it will have to be built to dist/ folder after version change in package.json. Run :
 
 ```sh
-npm run build
+npm run generate-binary
 ```
 
-This will modify the dist files. Now, commit the changes and push to remote repo.
+This will build the project, generate binary files in the dist folder. Now, commit the changes and push to remote repo.

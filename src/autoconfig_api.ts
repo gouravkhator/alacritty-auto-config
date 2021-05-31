@@ -17,24 +17,25 @@ import { alacritty_summarized_config_structure, alacritty_config_structure } fro
  * 
  * If alacritty is installed and this api is supported on the current os, then make directory and file for its config if the folder or file does not exist.
  * @returns Alacritty config path
+ * @throwsError when the alacritty program is not found in your path variable or not even installed in your system
  */
 export function configInit(): string {
-    // check for os type
+    let alacritty_install_checker_command: string = 'which alacritty';
+    let original_config_path: string = path.join(os.homedir(), '.config/alacritty/alacritty.yml');
+
+    // if os type is windows then change the install checker command and path directory for original config
     if (os.type() === 'Windows_NT') {
-        // The path for alacritty config is %APPDATA%\alacritty\alacritty.yml
-        // TODO: I can code up this if windows users can confirm the working
-        throw new Error("Platform win32 is currently not supported by our app");
+        // The path for alacritty config is C:\Users\gourav\alacritty\alacritty.yml and homedir is C:\Users\gourav
+        alacritty_install_checker_command = 'where alacritty';
+        original_config_path = path.join(os.homedir(), 'AppData', 'alacritty.yml');
     }
 
     // check if alacritty is installed or not
     try {
-        // TODO: which command will not work on windows, the equivalent command is `where <command-name>`
-        execSync('which alacritty');
+        execSync(alacritty_install_checker_command);
     } catch (err: any) {
-        throw new Error("Package Not Installed: alacritty is not installed in your system or it's path is not set in your PATH variable, so you cannot use our library..");
+        throw new Error("Package Not Installed: alacritty is not installed in your system or it's path is not set in your PATH or environment variable. \nSo, we are sorry that you cannot use our library. \n\nPlease install alacritty and try again");
     }
-
-    const original_config_path: string = path.join(os.homedir(), '.config/alacritty/alacritty.yml');
 
     if (!fs.existsSync(original_config_path)) {
         // mkdirectory recursively for original config file if it does not exists
@@ -53,6 +54,7 @@ export function configInit(): string {
  * (I suggest to first invoke the configInit function of the api, then this method will work fine)
  * @param original_config_path Absolute Path required to load the original config file of alacritty (Ex- /home/gourav/.config/alacritty/alacritty.yml)
  * @returns The Alacritty Config object which contains the properties and attributes (if there are any)
+ * @throwsError when the filepath cannot be loaded as yml
  */
 export function readOriginalConfig(original_config_path: string): alacritty_config_structure {
     try {
@@ -68,23 +70,23 @@ export function readOriginalConfig(original_config_path: string): alacritty_conf
  * 
  * @param alacritty_config_to_write The Alacritty Config Object containing the properties and attributes (if there are any), to write to the original config path
  * @param original_config_path_dir Absolute Path for the original alacritty config directory (Ex- /home/gourav/.config/alacritty/)
+ * @throwsError when the configurations cannot be written to target config path directory
  */
 export function writeToConfigFile(alacritty_config_to_write: alacritty_config_structure, original_config_path_dir: string) {
     try {
-        const temp_config_dir = path.join(original_config_path_dir, 'user_config_temp');
         const yml_file_path = path.resolve(original_config_path_dir, 'alacritty.yml');
 
         // mkdir recursively if it does not exists
-        fs.mkdirSync(temp_config_dir, { recursive: true });
+        fs.mkdirSync(path.dirname(yml_file_path), { recursive: true });
 
         const yml_str = JSON2YML.stringify(alacritty_config_to_write); // takes json and converts to yml format
-        
+
         fs.writeFileSync(yml_file_path, yml_str, 'utf-8'); // write the yml str to the file
-        
-        console.log('Please close and reopen all windows of alacritty if some effects were not applied..');
+
+        console.log('----Alacritty Auto Config----\n\nYour configs will be applied..\nIn case, you did not see the new look in alacritty, we suggest to close and reopen all windows of alacritty');
     } catch (err: any) {
         console.log('Sorry, some error occurred while writing configurations to the alacritty.yml file');
-        console.error(err);
+        console.error('Error: ' + err.message);
     }
 }
 
@@ -96,6 +98,7 @@ export function writeToConfigFile(alacritty_config_to_write: alacritty_config_st
  * @param original_config_path_dir Path for the Original Alacritty Config directory (Ex- /home/gourav/.config/alacritty/)
  * 
  * @returns Updated alacritty config
+ * @throwsError when some configs are in wrong format, or when the configs could not be written to file 
  */
 export function editConfig(alacritty_old_config: alacritty_config_structure = {}, new_config: alacritty_summarized_config_structure, original_config_path_dir: string): alacritty_config_structure {
 
@@ -122,7 +125,7 @@ export function editConfig(alacritty_old_config: alacritty_config_structure = {}
     }
 
     // accepts any case (lower, upper, mixed) for Block, Underline, Beam
-    if(cursor_style && !(["Block", "Underline", "Beam"].includes(capitaliseString(cursor_style)))){
+    if (cursor_style && !(["Block", "Underline", "Beam"].includes(capitaliseString(cursor_style)))) {
         throw new Error("Cursor style provided is not in one of the 3 accepted styles");
     }
 

@@ -17,16 +17,17 @@
   "pkg": {
     "targets": [
       "node16-linux-x64",
-      "node16-macos-x64"
-    ],
-    "outputPath": "dist/bin"
+      "node16-macos-x64",
+      "node16-win-x64"
+    ]
   },
   "scripts": {
     "prebuild": "rimraf dist/ output_tsc/",
     "build": "tsc && rollup -c",
     "postbuild": "rimraf dist/types/",
     "dev": "tsc --watch",
-    "generate-binary": "pkg ."
+    "bin": "pkg . --compress GZip --output dist/bin/$npm_package_name-v$npm_package_version",
+    "generate-binary": "npm run build && npm run bin"
   },
   "keywords": [
     "alacritty",

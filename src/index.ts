@@ -9,7 +9,7 @@ import { alacritty_config_structure } from "./config_object_structures.js";
 /**
  * Main Function which is run from the command line
  */
-function main(){
+function main() {
     let original_config_path: string = "";
 
     try {
@@ -18,28 +18,28 @@ function main(){
         let alacritty_config: alacritty_config_structure = readOriginalConfig(original_config_path);
         const original_config_path_dir: string = path.dirname(original_config_path);
 
-        let argumentInputs = takeArgumentInputs(alacritty_config); 
+        let argumentInputs = takeArgumentInputs(alacritty_config);
         // if the arguments are not passed, it will take the old config only, and if config does not have that property, it will set defaults for that
-        
+
         editConfig(alacritty_config, {
-            fontsize: parseFloat(""+argumentInputs.s), // if they are string or number, convert that to string then parse its numeric value
+            fontsize: parseFloat("" + argumentInputs.s), // if they are string or number, convert that to string then parse its numeric value
             primary_bgcolor: argumentInputs.b,
             primary_fgcolor: argumentInputs.c,
             selection_fgcolor: argumentInputs.t,
             cursor_style: argumentInputs.y,
-            background_opacity: parseFloat(""+argumentInputs.o),
+            background_opacity: parseFloat("" + argumentInputs.o),
         }, original_config_path_dir);
 
     } catch (err) {
-        console.error(err);
+        console.error('Error: ' + err.message);
     }
 }
 
-const fileURL: URL = new URL(`file://${process.argv[1]}`); 
+const fileURL: URL = new URL(`file://${process.argv[1]}`);
 // converting the path to URL as this will make the valid url out of it, like replace space with %20, or some special characters with some codes
 
 // Only run main() when the file is run from cli
-if (import.meta?.url === fileURL.toString()){
+if (import.meta?.url === fileURL.toString()) {
     main();
 }
 

@@ -38,6 +38,7 @@ declare type alacritty_summarized_config_structure = {
  *
  * If alacritty is installed and this api is supported on the current os, then make directory and file for its config if the folder or file does not exist.
  * @returns Alacritty config path
+ * @throwsError when the alacritty program is not found in your path variable or not even installed in your system
  */
 declare function configInit(): string;
 /**
@@ -48,6 +49,7 @@ declare function configInit(): string;
  * (I suggest to first invoke the configInit function of the api, then this method will work fine)
  * @param original_config_path Absolute Path required to load the original config file of alacritty (Ex- /home/gourav/.config/alacritty/alacritty.yml)
  * @returns The Alacritty Config object which contains the properties and attributes (if there are any)
+ * @throwsError when the filepath cannot be loaded as yml
  */
 declare function readOriginalConfig(original_config_path: string): alacritty_config_structure;
 /**
@@ -55,6 +57,7 @@ declare function readOriginalConfig(original_config_path: string): alacritty_con
  *
  * @param alacritty_config_to_write The Alacritty Config Object containing the properties and attributes (if there are any), to write to the original config path
  * @param original_config_path_dir Absolute Path for the original alacritty config directory (Ex- /home/gourav/.config/alacritty/)
+ * @throwsError when the configurations cannot be written to target config path directory
  */
 declare function writeToConfigFile(alacritty_config_to_write: alacritty_config_structure, original_config_path_dir: string): void;
 /**
@@ -65,6 +68,7 @@ declare function writeToConfigFile(alacritty_config_to_write: alacritty_config_s
  * @param original_config_path_dir Path for the Original Alacritty Config directory (Ex- /home/gourav/.config/alacritty/)
  *
  * @returns Updated alacritty config
+ * @throwsError when some configs are in wrong format, or when the configs could not be written to file
  */
 declare function editConfig(alacritty_old_config: alacritty_config_structure, new_config: alacritty_summarized_config_structure, original_config_path_dir: string): alacritty_config_structure;
 

@@ -150,7 +150,7 @@ export function takeArgumentInputs(alacritty_old_config: alacritty_config_struct
             y: { type: 'string' },
             o: { type: 'number' },
         })
-        .usage('Usage: node dist/$0 [options]=[values]\n\nThe options may/may not provided in the CLI. If they are not provided, either the previously set config is used or the defaults are set.')
+        .usage('Usage: node $0 [options]=[values]\nOr, $0 [options]=[values] if $0 is an executable and not a javascript file\n\nThe options may/may not provided in the CLI. If they are not provided, either the previously set config is used or the defaults are set.')
 
         // .demandOption(['s', 'b', 'c']) // to set them required, but as I am setting defaults so its optional
 

@@ -155,7 +155,7 @@ function takeArgumentInputs(alacritty_old_config = {}) {
         y: { type: 'string' },
         o: { type: 'number' },
     })
-        .usage('Usage: node dist/$0 [options]=[values]\n\nThe options may/may not provided in the CLI. If they are not provided, either the previously set config is used or the defaults are set.')
+        .usage('Usage: node $0 [options]=[values]\nOr, $0 [options]=[values] if $0 is an executable and not a javascript file\n\nThe options may/may not provided in the CLI. If they are not provided, either the previously set config is used or the defaults are set.')
         // .demandOption(['s', 'b', 'c']) // to set them required, but as I am setting defaults so its optional
         // options
         .help('h')
@@ -312,23 +312,24 @@ function oldConvertToHex(color_code) {
  *
  * If alacritty is installed and this api is supported on the current os, then make directory and file for its config if the folder or file does not exist.
  * @returns Alacritty config path
+ * @throwsError when the alacritty program is not found in your path variable or not even installed in your system
  */
 function configInit() {
-    // check for os type
+    let alacritty_install_checker_command = 'which alacritty';
+    let original_config_path = path__default['default'].join(os__default['default'].homedir(), '.config/alacritty/alacritty.yml');
+    // if os type is windows then change the install checker command and path directory for original config
     if (os__default['default'].type() === 'Windows_NT') {
-        // The path for alacritty config is %APPDATA%\alacritty\alacritty.yml
-        // TODO: I can code up this if windows users can confirm the working
-        throw new Error("Platform win32 is currently not supported by our app");
+        // The path for alacritty config is C:\Users\gourav\alacritty\alacritty.yml and homedir is C:\Users\gourav
+        alacritty_install_checker_command = 'where alacritty';
+        original_config_path = path__default['default'].join(os__default['default'].homedir(), 'AppData', 'alacritty.yml');
     }
     // check if alacritty is installed or not
     try {
-        // TODO: which command will not work on windows, the equivalent command is `where <command-name>`
-        child_process.execSync('which alacritty');
+        child_process.execSync(alacritty_install_checker_command);
     }
     catch (err) {
-        throw new Error("Package Not Installed: alacritty is not installed in your system or it's path is not set in your PATH variable, so you cannot use our library..");
+        throw new Error("Package Not Installed: alacritty is not installed in your system or it's path is not set in your PATH or environment variable. \nSo, we are sorry that you cannot use our library. \n\nPlease install alacritty and try again");
     }
-    const original_config_path = path__default['default'].join(os__default['default'].homedir(), '.config/alacritty/alacritty.yml');
     if (!fs__default['default'].existsSync(original_config_path)) {
         // mkdirectory recursively for original config file if it does not exists
         fs__default['default'].mkdirSync(path__default['default'].dirname(original_config_path), { recursive: true });
@@ -344,6 +345,7 @@ function configInit() {
  * (I suggest to first invoke the configInit function of the api, then this method will work fine)
  * @param original_config_path Absolute Path required to load the original config file of alacritty (Ex- /home/gourav/.config/alacritty/alacritty.yml)
  * @returns The Alacritty Config object which contains the properties and attributes (if there are any)
+ * @throwsError when the filepath cannot be loaded as yml
  */
 function readOriginalConfig(original_config_path) {
     try {
@@ -359,20 +361,20 @@ function readOriginalConfig(original_config_path) {
  *
  * @param alacritty_config_to_write The Alacritty Config Object containing the properties and attributes (if there are any), to write to the original config path
  * @param original_config_path_dir Absolute Path for the original alacritty config directory (Ex- /home/gourav/.config/alacritty/)
+ * @throwsError when the configurations cannot be written to target config path directory
  */
 function writeToConfigFile(alacritty_config_to_write, original_config_path_dir) {
     try {
-        const temp_config_dir = path__default['default'].join(original_config_path_dir, 'user_config_temp');
         const yml_file_path = path__default['default'].resolve(original_config_path_dir, 'alacritty.yml');
         // mkdir recursively if it does not exists
-        fs__default['default'].mkdirSync(temp_config_dir, { recursive: true });
+        fs__default['default'].mkdirSync(path__default['default'].dirname(yml_file_path), { recursive: true });
         const yml_str = JSON2YML__default['default'].stringify(alacritty_config_to_write); // takes json and converts to yml format
         fs__default['default'].writeFileSync(yml_file_path, yml_str, 'utf-8'); // write the yml str to the file
-        console.log('Please close and reopen all windows of alacritty if some effects were not applied..');
+        console.log('----Alacritty Auto Config----\n\nYour configs will be applied..\nIn case, you did not see the new look in alacritty, we suggest to close and reopen all windows of alacritty');
     }
     catch (err) {
         console.log('Sorry, some error occurred while writing configurations to the alacritty.yml file');
-        console.error(err);
+        console.error('Error: ' + err.message);
     }
 }
 /**
@@ -383,6 +385,7 @@ function writeToConfigFile(alacritty_config_to_write, original_config_path_dir) 
  * @param original_config_path_dir Path for the Original Alacritty Config directory (Ex- /home/gourav/.config/alacritty/)
  *
  * @returns Updated alacritty config
+ * @throwsError when some configs are in wrong format, or when the configs could not be written to file
  */
 function editConfig(alacritty_old_config = {}, new_config, original_config_path_dir) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
@@ -451,7 +454,7 @@ function main() {
         }, original_config_path_dir);
     }
     catch (err) {
-        console.error(err);
+        console.error('Error: ' + err.message);
     }
 }
 const fileURL = new url.URL(`file://${process.argv[1]}`);
