@@ -9,9 +9,8 @@ var yargs = require('yargs');
 var helpers = require('yargs/helpers');
 var os = require('os');
 var fs = require('fs');
-var YAML = require('yamljs');
+var YAML = require('yaml');
 var child_process = require('child_process');
-var JSON2YML = require('json2yaml');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -20,7 +19,6 @@ var yargs__default = /*#__PURE__*/_interopDefaultLegacy(yargs);
 var os__default = /*#__PURE__*/_interopDefaultLegacy(os);
 var fs__default = /*#__PURE__*/_interopDefaultLegacy(fs);
 var YAML__default = /*#__PURE__*/_interopDefaultLegacy(YAML);
-var JSON2YML__default = /*#__PURE__*/_interopDefaultLegacy(JSON2YML);
 
 /**
  *
@@ -349,7 +347,8 @@ function configInit() {
  */
 function readOriginalConfig(original_config_path) {
     try {
-        let alacritty_config = YAML__default['default'].load(original_config_path);
+        const file_content = fs__default['default'].readFileSync(original_config_path, 'utf8'); // reads file
+        let alacritty_config = YAML__default['default'].parse(file_content); // parses the yaml and converts that to json format
         return alacritty_config;
     }
     catch (err) {
@@ -368,7 +367,7 @@ function writeToConfigFile(alacritty_config_to_write, original_config_path_dir) 
         const yml_file_path = path__default['default'].resolve(original_config_path_dir, 'alacritty.yml');
         // mkdir recursively if it does not exists
         fs__default['default'].mkdirSync(path__default['default'].dirname(yml_file_path), { recursive: true });
-        const yml_str = JSON2YML__default['default'].stringify(alacritty_config_to_write); // takes json and converts to yml format
+        const yml_str = YAML__default['default'].stringify(alacritty_config_to_write); // takes json and converts to yml format
         fs__default['default'].writeFileSync(yml_file_path, yml_str, 'utf-8'); // write the yml str to the file
         console.log('----Alacritty Auto Config----\n\nYour configs will be applied..\nIn case, you did not see the new look in alacritty, we suggest to close and reopen all windows of alacritty');
     }

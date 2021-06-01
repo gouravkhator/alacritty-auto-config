@@ -1,9 +1,8 @@
 import os from "os";
 import fs from "fs";
 import path from "path";
-import YAML from "yamljs";
+import YAML from 'yaml';
 import { execSync } from "child_process";
-import JSON2YML from 'json2yaml';
 
 import { convertToHex } from "./argument_parser_util.js";
 import { capitaliseString } from "./utils/internals.js";
@@ -58,7 +57,8 @@ export function configInit(): string {
  */
 export function readOriginalConfig(original_config_path: string): alacritty_config_structure {
     try {
-        let alacritty_config: any = YAML.load(original_config_path);
+        const file_content: string = fs.readFileSync(original_config_path, 'utf8'); // reads file
+        let alacritty_config: any = YAML.parse(file_content); // parses the yaml and converts that to json format
         return alacritty_config;
     } catch (err: any) {
         throw new Error("Cannot load original alacritty config file from the path provided..");
@@ -79,7 +79,7 @@ export function writeToConfigFile(alacritty_config_to_write: alacritty_config_st
         // mkdir recursively if it does not exists
         fs.mkdirSync(path.dirname(yml_file_path), { recursive: true });
 
-        const yml_str = JSON2YML.stringify(alacritty_config_to_write); // takes json and converts to yml format
+        const yml_str = YAML.stringify(alacritty_config_to_write); // takes json and converts to yml format
 
         fs.writeFileSync(yml_file_path, yml_str, 'utf-8'); // write the yml str to the file
 

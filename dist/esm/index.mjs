@@ -5,9 +5,8 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import os from 'os';
 import fs from 'fs';
-import YAML from 'yamljs';
+import YAML from 'yaml';
 import { execSync } from 'child_process';
-import JSON2YML from 'json2yaml';
 
 /**
  *
@@ -336,7 +335,8 @@ function configInit() {
  */
 function readOriginalConfig(original_config_path) {
     try {
-        let alacritty_config = YAML.load(original_config_path);
+        const file_content = fs.readFileSync(original_config_path, 'utf8'); // reads file
+        let alacritty_config = YAML.parse(file_content); // parses the yaml and converts that to json format
         return alacritty_config;
     }
     catch (err) {
@@ -355,7 +355,7 @@ function writeToConfigFile(alacritty_config_to_write, original_config_path_dir) 
         const yml_file_path = path.resolve(original_config_path_dir, 'alacritty.yml');
         // mkdir recursively if it does not exists
         fs.mkdirSync(path.dirname(yml_file_path), { recursive: true });
-        const yml_str = JSON2YML.stringify(alacritty_config_to_write); // takes json and converts to yml format
+        const yml_str = YAML.stringify(alacritty_config_to_write); // takes json and converts to yml format
         fs.writeFileSync(yml_file_path, yml_str, 'utf-8'); // write the yml str to the file
         console.log('----Alacritty Auto Config----\n\nYour configs will be applied..\nIn case, you did not see the new look in alacritty, we suggest to close and reopen all windows of alacritty');
     }
