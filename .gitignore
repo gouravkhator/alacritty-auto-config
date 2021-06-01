@@ -4,3 +4,4 @@ node_modules/
 output_tsc/
 
 dist/bin/
+dist/types/
