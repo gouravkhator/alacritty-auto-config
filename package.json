@@ -42,8 +42,6 @@
     "cli",
     "api"
   ],
-  "author": "Gourav Khator",
-  "license": "MIT",
   "devDependencies": {
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-replace": "^2.4.2",
@@ -68,5 +66,7 @@
   "bugs": {
     "url": "https://github.com/gouravkhator/alacritty-auto-config/issues"
   },
-  "homepage": "https://github.com/gouravkhator/alacritty-auto-config#readme"
+  "homepage": "https://github.com/gouravkhator/alacritty-auto-config#readme",
+  "author": "Gourav Khator",
+  "license": "Apache-2.0"
 }
