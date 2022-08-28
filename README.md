@@ -11,12 +11,15 @@ This is a small npm library which is used to automatically configure Alacritty b
 For windows users, please run the package, to see if the configurations actually work or not. I am unable to test it out in windows.
 
 Install the package globally:
+
 ```sh
 npm install -g alacritty-auto-config
 ```
+
 **Note: Run the above command with sudo if you are on mac or linux**
 
 Install the package locally:
+
 ```sh
 npm install alacritty-auto-config
 ```
@@ -26,23 +29,26 @@ npm install alacritty-auto-config
 **Before running anything, make sure your alacritty.yml file(if it exists) is backed up, as it may overwrite some configurations in the alacritty.yml file as per your inputs in the CLI/API.**
 
 For global install:
+
 ```sh
 alacritty-auto-config [options]=[values]
 ```
 
-Or, 
+Or,
+
 ```sh
 aac [options]=[values]
 ```
 
-For local install, just run the above commands on terminal with npx prefix. 
+For local install, just run the above commands on terminal with npx prefix.
 
 Ex-
+
 ```sh
 npx alacritty-auto-config [options]=[values]
 ```
 
-* Show Help:
+- Show Help:
 
 ```sh
 aac -h
@@ -54,7 +60,7 @@ Or,
 aac --help
 ```
 
-* Options:
+- Options:
 
 ```sh
 -s, --fontsize: Takes font size to be set in alacritty (default=10)
@@ -98,10 +104,13 @@ npm run dev
 The above options and values are also valid if you build the project yourself, and run the distribution file with those options.
 
 Run the below scripts from the project root folder:
+
 ```sh
 node dist/esm/index.mjs [options]=[values]
 ```
+
 Or,
+
 ```sh
 node dist/cjs/index.cjs [options]=[values]
 ```
@@ -111,38 +120,39 @@ node dist/cjs/index.cjs [options]=[values]
 - `dist/cjs/index.cjs` CommonJS module.
 - `dist/esm/index.mjs` EcmaScript module.
 - `dist/esm/index.min.mjs` Minified EcmaScript module.
-<!-- - `dist/cjs-compat/index.js` CommonJS module, transpiled for older browsers. -->
-<!-- - `dist/bundle.esm-compact.mjs` EcmaScript module, transpiled for older browsers. -->
-<!-- - `dist/bundle.iife.min.js` Minified plain JS. -->
-<!-- - `dist/bundle.iife-compact.js` As above, but transpiled for older browsers. -->
+  <!-- - `dist/cjs-compat/index.js` CommonJS module, transpiled for older browsers. -->
+  <!-- - `dist/bundle.esm-compact.mjs` EcmaScript module, transpiled for older browsers. -->
+  <!-- - `dist/bundle.iife.min.js` Minified plain JS. -->
+  <!-- - `dist/bundle.iife-compact.js` As above, but transpiled for older browsers. -->
 
-### package.json Explanation 
+### package.json Explanation
 
 **Note: It may be outdated, so check the main package.json for latest configs**
 
-* main - Path of the main script file (which will work as a fallback if exports field cannot be processed by the older nodejs)
-* module - Path of the module script file (if exports field could not be processed and the package uses import statements).
-* exports - Tells that this package will export:
-    * ESM folder's file if this package is imported as import
-    * CJS folder's file if this package is imported as require statements
-* types - Tells npm to look for the type declarations at the given file path in types field.
-* bin - Gives cli commands and their respective js file to run when the particular command is invoked.
-* pkg - An npm package which can generate executables out of npm packages. Here, we specify:
-    * targets to be operating system environments
-    * output path to be dist/bin folder for all generated executables.
-* scripts - Normal NPM scripts.
-    * prebuild - Runs before actual build script
-    * build - Builds the folders for distribution
-    * dev - Watch mode for typescript files
-    * generate-binary - Generates executables for major OS platforms.
-    * postbuild - Clean up after running build script
-* keywords - Basic keywords for the npm package
+- main - Path of the main script file (which will work as a fallback if exports field cannot be processed by the older nodejs)
+- module - Path of the module script file (if exports field could not be processed and the package uses import statements).
+- exports - Tells that this package will export:
+  - ESM folder's file if this package is imported as import
+  - CJS folder's file if this package is imported as require statements
+- types - Tells npm to look for the type declarations at the given file path in types field.
+- bin - Gives cli commands and their respective js file to run when the particular command is invoked.
+- pkg - An npm package which can generate executables out of npm packages. Here, we specify:
+  - targets to be operating system environments
+  - output path to be dist/bin folder for all generated executables.
+- scripts - Normal NPM scripts.
+  - prebuild - Runs before actual build script
+  - build - Builds the folders for distribution
+  - dev - Watch mode for typescript files
+  - generate-binary - Generates executables for major OS platforms.
+  - postbuild - Clean up after running build script
+- keywords - Basic keywords for the npm package
 
 Other things are normal for any npm package like repository for specifying remote git repository link, bugs for specifying remote git repository bugs and issues link, homepage for specifying either the README.md file link or the actual website link for the package homepage.
 
 ### Publish to npm
 
 For publishing patch, first check if the git working directory is clean and committed and not dirty or modified. Then run the below commands:
+
 ```sh
 npm version patch
 ```

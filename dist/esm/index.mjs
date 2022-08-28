@@ -301,13 +301,13 @@ function oldConvertToHex(color_code) {
  * @throwsError when the alacritty program is not found in your path variable or not even installed in your system
  */
 function configInit() {
-    let alacritty_install_checker_command = 'which alacritty';
-    let original_config_path = path.join(os.homedir(), '.config/alacritty/alacritty.yml');
+    let alacritty_install_checker_command = "which alacritty";
+    let original_config_path = path.join(os.homedir(), ".config/alacritty/alacritty.yml");
     // if os type is windows then change the install checker command and path directory for original config
-    if (os.type() === 'Windows_NT') {
+    if (os.type() === "Windows_NT") {
         // The path for alacritty config is C:\Users\gourav\alacritty\alacritty.yml and homedir is C:\Users\gourav
-        alacritty_install_checker_command = 'where alacritty';
-        original_config_path = path.join(os.homedir(), 'AppData', 'alacritty.yml');
+        alacritty_install_checker_command = "where alacritty";
+        original_config_path = path.join(os.homedir(), "AppData", "alacritty.yml");
     }
     // check if alacritty is installed or not
     try {
@@ -319,7 +319,7 @@ function configInit() {
     if (!fs.existsSync(original_config_path)) {
         // mkdirectory recursively for original config file if it does not exists
         fs.mkdirSync(path.dirname(original_config_path), { recursive: true });
-        fs.writeFileSync(original_config_path, '');
+        fs.writeFileSync(original_config_path, "");
     }
     return original_config_path;
 }
@@ -335,7 +335,7 @@ function configInit() {
  */
 function readOriginalConfig(original_config_path) {
     try {
-        const file_content = fs.readFileSync(original_config_path, 'utf8'); // reads file
+        const file_content = fs.readFileSync(original_config_path, "utf8"); // reads file
         let alacritty_config = YAML.parse(file_content); // parses the yaml and converts that to json format
         return alacritty_config;
     }
@@ -352,16 +352,16 @@ function readOriginalConfig(original_config_path) {
  */
 function writeToConfigFile(alacritty_config_to_write, original_config_path_dir) {
     try {
-        const yml_file_path = path.resolve(original_config_path_dir, 'alacritty.yml');
+        const yml_file_path = path.resolve(original_config_path_dir, "alacritty.yml");
         // mkdir recursively if it does not exists
         fs.mkdirSync(path.dirname(yml_file_path), { recursive: true });
         const yml_str = YAML.stringify(alacritty_config_to_write); // takes json and converts to yml format
-        fs.writeFileSync(yml_file_path, yml_str, 'utf-8'); // write the yml str to the file
-        console.log('----Alacritty Auto Config----\n\nYour configs will be applied..\nIn case, you did not see the new look in alacritty, we suggest to close and reopen all windows of alacritty');
+        fs.writeFileSync(yml_file_path, yml_str, "utf-8"); // write the yml str to the file
+        console.log("----Alacritty Auto Config----\n\nYour configs will be applied..\nIn case, you did not see the new look in alacritty, we suggest to close and reopen all windows of alacritty");
     }
     catch (err) {
-        console.log('Sorry, some error occurred while writing configurations to the alacritty.yml file');
-        console.error('Error: ' + err.message);
+        console.log("Sorry, some error occurred while writing configurations to the alacritty.yml file");
+        console.error("Error: " + err.message);
     }
 }
 /**
@@ -384,7 +384,7 @@ function editConfig(alacritty_old_config = {}, new_config, original_config_path_
     let old_cursor_style = (_o = (_m = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.cursor) === null || _m === void 0 ? void 0 : _m.style) !== null && _o !== void 0 ? _o : "Block";
     let old_background_opacity = (_p = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.background_opacity) !== null && _p !== void 0 ? _p : undefined;
     // take all new config params, and fallback to old config if not provided
-    let { primary_bgcolor = old_bgcolor, primary_fgcolor = old_fgcolor, fontsize = old_fontsize, selection_fgcolor = old_selcolor, cursor_style = old_cursor_style, background_opacity = old_background_opacity } = new_config;
+    let { primary_bgcolor = old_bgcolor, primary_fgcolor = old_fgcolor, fontsize = old_fontsize, selection_fgcolor = old_selcolor, cursor_style = old_cursor_style, background_opacity = old_background_opacity, } = new_config;
     // we will convert every string to hex code starting with 0x (if possible), to save in new config file
     // if the colors are empty or undefined, then return undefined from convertToHex
     // if the colors are not in correct format, throw error
@@ -395,7 +395,8 @@ function editConfig(alacritty_old_config = {}, new_config, original_config_path_
         throw new Error("Font size provided is not in the range 0.1 to 40.0");
     }
     // accepts any case (lower, upper, mixed) for Block, Underline, Beam
-    if (cursor_style && !(["Block", "Underline", "Beam"].includes(capitaliseString(cursor_style)))) {
+    if (cursor_style &&
+        !["Block", "Underline", "Beam"].includes(capitaliseString(cursor_style))) {
         throw new Error("Cursor style provided is not in one of the 3 accepted styles");
     }
     if (background_opacity < 0.0 || background_opacity > 1.0) {
@@ -441,12 +442,16 @@ function main() {
         }, original_config_path_dir);
     }
     catch (err) {
-        console.error('Error: ' + err.message);
+        console.error("Error: " + err.message);
     }
 }
+/*
+converting the path to URL as this will make the valid url out of it,
+like replace space with %20, or some special characters with some codes
+*/
 const fileURL = new URL(`file://${process.argv[1]}`);
-// converting the path to URL as this will make the valid url out of it, like replace space with %20, or some special characters with some codes
-// Only run main() when the file is run from cli
+// Only run main() function, when the file is run from cli
+// ! ISSUE: this if condition does not work for all cases, so we have to think of some alternative
 if (((_a = (import.meta)) === null || _a === void 0 ? void 0 : _a.url) === fileURL.toString()) {
     main();
 }
