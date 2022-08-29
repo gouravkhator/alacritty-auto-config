@@ -38,10 +38,12 @@ For publishing patch, first check if the git working directory is clean and comm
 npm version patch
 ```
 
-As the package uses rollup and shows version in the CLI, so it will have to be built to dist/ folder after version change in package.json. Run :
+As the package uses rollup and displays version in its help menu, so it will have to be built to `dist/` folder after every version change in `package.json` file.
+
+Run below command to generate the binaries and build files again:
 
 ```sh
 npm run generate-binary
 ```
 
-This will build the project, and then generate the binary executables in the dist folder. Now, we can commit the changes and push to remote repo.
+This will build the project, and then generate the binary executables in the `dist` folder. Now, we can commit the changes and push to remote repo.
