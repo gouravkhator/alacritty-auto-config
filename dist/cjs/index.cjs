@@ -4,11 +4,11 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 
 var path = require('path');
-var url = require('url');
 var yargs = require('yargs');
 var helpers = require('yargs/helpers');
-var os = require('os');
 var fs = require('fs');
+var url = require('url');
+var os = require('os');
 var YAML = require('yaml');
 var child_process = require('child_process');
 
@@ -16,8 +16,8 @@ function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'defau
 
 var path__default = /*#__PURE__*/_interopDefaultLegacy(path);
 var yargs__default = /*#__PURE__*/_interopDefaultLegacy(yargs);
-var os__default = /*#__PURE__*/_interopDefaultLegacy(os);
 var fs__default = /*#__PURE__*/_interopDefaultLegacy(fs);
+var os__default = /*#__PURE__*/_interopDefaultLegacy(os);
 var YAML__default = /*#__PURE__*/_interopDefaultLegacy(YAML);
 
 /**
@@ -32,6 +32,31 @@ function capitaliseString(str) {
     else {
         return undefined;
     }
+}
+/**
+ * Tells if the script is run from the cli or imported as a module..
+ * @returns true if the script is run from the CLI, and false otherwise..
+ */
+function isTheScriptRunFromCLI() {
+    /*
+      We use realpathSync to resolve symlinks,
+      as the cli scripts will often be executed from symlinks in the `node_modules/.bin` folder
+      */
+    /*
+      Why we had process.argv[1]?
+      > It is bcoz, even the npm bin commands are resolved to command:
+      `node <cjs/esm filename>.<cjs/esm>`.
+    
+      We want the real file path of the second argument in the resolved command, as mentioned above.
+      */
+    const realPath = fs.realpathSync(process.argv[1]);
+    // Convert the file-path to a file-url before comparing it
+    const realPathAsUrl = url.pathToFileURL(realPath).href;
+    /*
+      if the script's import url is same as the path where the script is actually stored,
+      then it was run from the CLI itself
+      */
+    return (typeof document === 'undefined' ? new (require('u' + 'rl').URL)('file:' + __filename).href : (document.currentScript && document.currentScript.src || new URL('index.cjs', document.baseURI).href)) === realPathAsUrl;
 }
 
 const hex_color_regex = /^0x([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/;
@@ -78,15 +103,15 @@ function convertToHash(color_code) {
     color_code = color_code.trim();
     if (hex_color_regex.test(color_code)) {
         // color_code was in hex(0x) and convert that to hash(#)
-        return '#' + convertShortToLongCode(color_code.substring(2));
+        return "#" + convertShortToLongCode(color_code.substring(2));
     }
     else if (hash_color_regex.test(color_code)) {
         // color_code was in hash(#) but can be in short (3 letter format), so convert that to long format
-        return '#' + convertShortToLongCode(color_code.substring(1));
+        return "#" + convertShortToLongCode(color_code.substring(1));
     }
     else {
         // neither in hash format nor in hex format
-        throw new Error('Color code is not provided in hex(0x) or hash(#) format..');
+        throw new Error("Color code is not provided in hex(0x) or hash(#) format..");
     }
 }
 /**
@@ -106,15 +131,15 @@ function convertToHex(color_code) {
     color_code = color_code.trim();
     if (hash_color_regex.test(color_code)) {
         // color_code was in hash(#) and convert that to hex(0x)
-        return '0x' + convertShortToLongCode(color_code.substring(1));
+        return "0x" + convertShortToLongCode(color_code.substring(1));
     }
     else if (hex_color_regex.test(color_code)) {
         // color_code was in hex(0x)
-        return '0x' + convertShortToLongCode(color_code.substring(2));
+        return "0x" + convertShortToLongCode(color_code.substring(2));
     }
     else {
         // neither in hash format nor in hex format
-        throw new Error('Color code is not provided in hex(0x) or hash(#) format..');
+        throw new Error("Color code provided is invalid, as it either contains invalid values or it is not in hex(0x) or hash(#) format..");
     }
 }
 /**
@@ -127,46 +152,50 @@ function takeArgumentInputs(alacritty_old_config = {}) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
     // for referring to options' longnames
     const arg_keys = {
-        s: 'fontsize',
-        b: 'bgcolor',
-        c: 'fgcolor',
-        t: 'selcolor',
-        y: 'cursor',
-        o: 'opacity', // background opacity
+        s: "fontsize",
+        b: "bgcolor",
+        c: "fgcolor",
+        t: "selcolor",
+        y: "cursor",
+        o: "opacity", // background opacity
     };
     // provide optional default values (for fields you want to provide)
     const default_values = {
         s: 16,
-        b: '#111122',
-        c: '#ccccff',
-        t: '#111122',
+        b: "#111122",
+        c: "#ccccff",
+        t: "#111122",
         y: "Block",
         o: 1.0,
     };
-    return yargs__default['default'](helpers.hideBin(process.argv))
+    return (yargs__default['default'](helpers.hideBin(process.argv))
         .options({
         // adding type to each argument
-        s: { type: 'number' },
-        b: { type: 'string' },
-        c: { type: 'string' },
-        t: { type: 'string' },
-        y: { type: 'string' },
-        o: { type: 'number' },
+        s: { type: "number" },
+        b: { type: "string" },
+        c: { type: "string" },
+        t: { type: "string" },
+        y: { type: "string" },
+        o: { type: "number" },
     })
-        .usage('Usage: node $0 [options]=[values]\nOr, $0 [options]=[values] if $0 is an executable and not a javascript file\n\nThe options may/may not provided in the CLI. If they are not provided, either the previously set config is used or the defaults are set.')
-        // .demandOption(['s', 'b', 'c']) // to set them required, but as I am setting defaults so its optional
+        .usage("Usage: node <javascript-file-name> [options]=[values],\nif the file you ran is a javascript file..\n\nOr just, <executable-name> [options]=[values]\n\nThe options are not required fields. If you don't provide the options, we either load your previously set alacritty config, or we set our own defaults for those options.")
+        /*
+        to set the fields required we can use `demandOption`,
+        but as I am setting defaults so so those fields are optional for my use case
+        */
+        // .demandOption(['s', 'b', 'c'])
         // options
-        .help('h')
+        .help("h")
         .version("1.3.1") // the version is replaced in rollup build process
         // aliases
-        .alias('s', arg_keys.s)
-        .alias('b', arg_keys.b)
-        .alias('c', arg_keys.c)
-        .alias('t', arg_keys.t)
-        .alias('y', arg_keys.y)
-        .alias('o', arg_keys.o)
-        .alias('h', 'help')
-        .alias('v', 'version')
+        .alias("s", arg_keys.s)
+        .alias("b", arg_keys.b)
+        .alias("c", arg_keys.c)
+        .alias("t", arg_keys.t)
+        .alias("y", arg_keys.y)
+        .alias("o", arg_keys.o)
+        .alias("h", "help")
+        .alias("v", "version")
         // defaults to alacritty old config if that exists or our own default
         .default(arg_keys.s, (_b = (_a = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.font) === null || _a === void 0 ? void 0 : _a.size) !== null && _b !== void 0 ? _b : default_values.s)
         .default(arg_keys.b, (_e = (_d = (_c = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.colors) === null || _c === void 0 ? void 0 : _c.primary) === null || _d === void 0 ? void 0 : _d.background) !== null && _e !== void 0 ? _e : default_values.b)
@@ -193,27 +222,27 @@ function takeArgumentInputs(alacritty_old_config = {}) {
         // conditional checks
         .check((argv) => {
         if (argv.s && (argv.s <= 0.0 || argv.s > 40.0)) {
-            throw new Error(`Wrong Arguments: Provided font size ${argv.s} should be within the range of display: 0.1 to 40.0`);
+            throw new Error(`Invalid Arguments: Provided font size \`${argv.s}\` is out of bounds of the display font range: 0.1 to 40.0!!`);
         }
         if (argv.b && convertToHex("" + argv.b) === undefined) {
-            throw new Error(`Wrong Arguments: Provided background color ${argv.b} should be in hash or hex format`);
+            throw new Error(`Invalid Arguments: Provided background color \`${argv.b}\` is neither in hash nor in hex format!!`);
         }
         if (argv.c && convertToHex("" + argv.c) === undefined) {
-            throw new Error(`Wrong Arguments: Provided font color ${argv.c} should be in hash or hex format`);
+            throw new Error(`Invalid Arguments: Provided font color \`${argv.c}\` is neither in hash nor in hex format!!`);
         }
         if (argv.t && convertToHex("" + argv.t) === undefined) {
-            throw new Error(`Wrong Arguments: Provided selection text color ${argv.t} should be in hash or hex format`);
+            throw new Error(`Invalid Arguments: Provided selection text color \`${argv.t}\` is neither in hash nor in hex format!!`);
         }
-        // allowing any case for cursor style (lower, upper or mixed)
-        if (argv.y && !["Block", "Underline", "Beam"].includes(capitaliseString("" + argv.y))) {
-            throw new Error(`Wrong Arguments: Provided cursor style ${argv.y} should be in one of the 3 styles`);
+        // here, we allow all case for the input of cursor style field (lowercase, uppercase or mixed-case)
+        if (argv.y &&
+            !["Block", "Underline", "Beam"].includes(capitaliseString("" + argv.y))) {
+            throw new Error(`Invalid Arguments: Provided cursor style: \`${argv.y}\` is not one of the allowed cursor styles: { block, underline, beam }`);
         }
         if (argv.o && (argv.o < 0.0 || argv.o > 1.0)) {
-            throw new Error(`Wrong Arguments: Provided background opacity ${argv.o} should be between 0.0 and 1.0`);
+            throw new Error(`Invalid Arguments: Provided background opacity \`${argv.o}\` is not in the range from 0.0 to 1.0!!`);
         }
         return true;
-    })
-        .argv;
+    }).argv);
 }
 /**
  * @deprecated - since version 1.2.0. Use convertToHash function
@@ -231,27 +260,27 @@ function takeArgumentInputs(alacritty_old_config = {}) {
  */
 function oldConvertToHash(color_code) {
     // color code is normally provided in string, but if the hexadecimal is provided then its inputted as decimal number.
-    if (typeof (color_code) === 'string') {
+    if (typeof color_code === "string") {
         if (!color_code || (color_code && color_code.trim() === "")) {
             return undefined;
         }
         color_code = color_code.trim();
         if (hex_color_regex.test(color_code)) {
             // color_code was in hex(0x) and convert that to hash(#)
-            return '#' + convertShortToLongCode(color_code.substring(2));
+            return "#" + convertShortToLongCode(color_code.substring(2));
         }
         else if (hash_color_regex.test(color_code)) {
             // color_code was in hash(#) but can be in short (3 letter format), so convert that to long format
-            return '#' + convertShortToLongCode(color_code.substring(1));
+            return "#" + convertShortToLongCode(color_code.substring(1));
         }
         else {
             // neither in hash format nor in hex format
-            throw new Error('Color code is not provided in hex(0x) or hash(#) format..');
+            throw new Error("Color code is not provided in hex(0x) or hash(#) format..");
         }
     }
-    else if (typeof (color_code) === "number") {
+    else if (typeof color_code === "number") {
         // color_code will be decimal format of hexadecimal number(which is also in 0x format but not a string)
-        // if color code inputted was 0x1f2, then its decimal was saved in color_code variable, and toString(16) will get back the '1f2' part as string in temp_str        
+        // if color code inputted was 0x1f2, then its decimal was saved in color_code variable, and toString(16) will get back the '1f2' part as string in temp_str
         let temp_str = color_code.toString(16);
         return "#" + convertShortToLongCode(temp_str);
     }
@@ -272,33 +301,27 @@ function oldConvertToHash(color_code) {
  */
 function oldConvertToHex(color_code) {
     // color code is normally provided in string, but if the hexadecimal is provided then its inputted as decimal number.
-    if (typeof (color_code) === 'string') {
+    if (typeof color_code === "string") {
         if (!color_code || (color_code && color_code.trim() === "")) {
             return undefined;
         }
         color_code = color_code.trim();
         if (hash_color_regex.test(color_code)) {
             // color_code was in hash(#) and convert that to hex(0x)
-            return '0x' + convertShortToLongCode(color_code.substring(1));
+            return "0x" + convertShortToLongCode(color_code.substring(1));
         }
         else if (hex_color_regex.test(color_code)) {
             // color_code was in hex(0x)
-            return '0x' + convertShortToLongCode(color_code.substring(2));
+            return "0x" + convertShortToLongCode(color_code.substring(2));
         }
         else {
             // neither in hash format nor in hex format
-            throw new Error('Color code is not provided in hex(0x) or hash(#) format..');
+            throw new Error("Color code is not provided in hex(0x) or hash(#) format..");
         }
     }
-    else if (typeof (color_code) === "number") {
+    else if (typeof color_code === "number") {
         // color_code will be decimal format of hexadecimal number(which is also in 0x format but not a string)
         let temp_str = color_code.toString(16);
-        // this can be the case when user inputted 0x011, then the number would be in 2 digits and not 3 digits, so append leading zeros at the start of the equivalent number
-        // add leading zeros if the length is < 3
-        // if (temp_str.length < 3){
-        //     const leading_zeros = 3 - temp_str.length;
-        //     temp_str = "0".repeat(leading_zeros) + temp_str;
-        // }
         return "0x" + convertShortToLongCode(temp_str);
     }
 }
@@ -346,13 +369,21 @@ function configInit() {
  * @throwsError when the filepath cannot be loaded as yml
  */
 function readOriginalConfig(original_config_path) {
+    let file_content;
     try {
-        const file_content = fs__default['default'].readFileSync(original_config_path, "utf8"); // reads file
+        file_content = fs__default['default'].readFileSync(original_config_path, "utf8"); // reads file
         let alacritty_config = YAML__default['default'].parse(file_content); // parses the yaml and converts that to json format
         return alacritty_config;
     }
     catch (err) {
-        throw new Error("Cannot load original alacritty config file from the path provided..");
+        if (file_content === undefined) {
+            // if file does not exist, ..
+            throw new Error("Unable to read the newly-created/original alacritty config file from the default config path..\n\nPlease verify the file/folder permissions assigned to the alacritty's default config folder..");
+        }
+        else {
+            throw new Error("Existing alacritty's config file cannot be parsed.\n\nPlease fix this YAML Parse Error and try again:\n" +
+                err.message);
+        }
     }
 }
 /**
@@ -369,7 +400,7 @@ function writeToConfigFile(alacritty_config_to_write, original_config_path_dir) 
         fs__default['default'].mkdirSync(path__default['default'].dirname(yml_file_path), { recursive: true });
         const yml_str = YAML__default['default'].stringify(alacritty_config_to_write); // takes json and converts to yml format
         fs__default['default'].writeFileSync(yml_file_path, yml_str, "utf-8"); // write the yml str to the file
-        console.log("----Alacritty Auto Config----\n\nYour configs will be applied..\nIn case, you did not see the new look in alacritty, we suggest to close and reopen all windows of alacritty");
+        console.log("Your configs will be applied..\nIn case, you did not see the new look in alacritty, we suggest to close and reopen all windows of alacritty");
     }
     catch (err) {
         console.log("Sorry, some error occurred while writing configurations to the alacritty.yml file");
@@ -428,23 +459,28 @@ function editConfig(alacritty_old_config = {}, new_config, original_config_path_
         }, cursor: {
             style: cursor_style,
         }, background_opacity: background_opacity });
-    writeToConfigFile(alacritty_updated_config, original_config_path_dir); // writing updated config to the original config path directory
+    // writing updated config to the original config path directory
+    writeToConfigFile(alacritty_updated_config, original_config_path_dir);
     return alacritty_updated_config;
 }
 
-var _a;
 /**
  * Main Function which is run from the command line
  */
 function main() {
+    console.log("----Alacritty Auto Config----\n");
     let original_config_path = "";
     try {
         original_config_path = configInit();
         let alacritty_config = readOriginalConfig(original_config_path);
         const original_config_path_dir = path__default['default'].dirname(original_config_path);
+        /*
+        if the arguments are not passed, it will take the old config only,
+        and if config does not have that property, it will set defaults for that
+        */
         let argumentInputs = takeArgumentInputs(alacritty_config);
-        // if the arguments are not passed, it will take the old config only, and if config does not have that property, it will set defaults for that
         editConfig(alacritty_config, {
+            // if they are string or number, convert that to string, then parse its numeric value
             fontsize: parseFloat("" + argumentInputs.s),
             primary_bgcolor: argumentInputs.b,
             primary_fgcolor: argumentInputs.c,
@@ -454,17 +490,10 @@ function main() {
         }, original_config_path_dir);
     }
     catch (err) {
-        console.error("Error: " + err.message);
+        console.error("Error: " + err.message + "\n");
     }
 }
-/*
-converting the path to URL as this will make the valid url out of it,
-like replace space with %20, or some special characters with some codes
-*/
-const fileURL = new url.URL(`file://${process.argv[1]}`);
-// Only run main() function, when the file is run from cli
-// ! ISSUE: this if condition does not work for all cases, so we have to think of some alternative
-if (((_a = (({ url: (typeof document === 'undefined' ? new (require('u' + 'rl').URL)('file:' + __filename).href : (document.currentScript && document.currentScript.src || new URL('index.cjs', document.baseURI).href)) }))) === null || _a === void 0 ? void 0 : _a.url) === fileURL.toString()) {
+if (isTheScriptRunFromCLI()) {
     main();
 }
 

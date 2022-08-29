@@ -1,14 +1,22 @@
 # Alacritty Auto Config
 
-This is a small npm library which is used to automatically configure Alacritty by providing functions. It provides both CLI option and the npm package to be used in any projects.
+[![Apache](https://img.shields.io/badge/license-Apache-white.svg?style=for-the-badge&color=%239c833e)](./LICENSE.md)
 
-## NPM Package
+**Check out the npm package in the npm repository [here](https://www.npmjs.com/package/alacritty-auto-config).**
+
+**[Download the stable release executables from SourceForge.net..](https://sourceforge.net/projects/alacritty-auto-config/)**
+
+This is a small npm library, which helps you configure Alacritty with ease. It provides both the CLI options and the npm package, which can be used to extend its functionality in any project you create.
+
+![Usage Options](./project-images/cli_help_menu_options.png)
+
+![Executable's Demo](./project-images/project_executable_demo.png)
+
+## NPM Package Installation & Execution
 
 ### Install the npm package
 
-**Sorry, but the global/local bin commands are having some issues, I am working on that. If you can contribute, it will be of great help to me. I accept PRs.**
-
-For windows users, please run the package, to see if the configurations actually work or not. I am unable to test it out in windows.
+For windows users, please run the package to see if the configurations actually work or not. I am unable to test it out on windows platform.
 
 Install the package globally:
 
@@ -24,9 +32,9 @@ Install the package locally:
 npm install alacritty-auto-config
 ```
 
-### Run the package in CLI
+### Run the npm package binary in the CLI
 
-**Before running anything, make sure your alacritty.yml file(if it exists) is backed up, as it may overwrite some configurations in the alacritty.yml file as per your inputs in the CLI/API.**
+**Before running anything, make sure your alacritty.yml file (if it exists) is backed up, as it may overwrite some configurations in the alacritty.yml file as per your inputs in the CLI/API.**
 
 For global install:
 
@@ -40,7 +48,7 @@ Or,
 aac [options]=[values]
 ```
 
-For local install, just run the above commands on terminal with npx prefix.
+For local install of that npm package, just run the above commands on terminal prefixed with `npm` like mentioned below.
 
 Ex-
 
@@ -97,11 +105,9 @@ npm run generate-binary
 npm run dev
 ```
 
-## Project CLI Version
+### Extra Notes after you build this project yourself
 
-### Usage
-
-The above options and values are also valid if you build the project yourself, and run the distribution file with those options.
+The above options and values are also valid, if you build the project yourself, and run the output file with those options.
 
 Run the below scripts from the project root folder:
 
@@ -115,52 +121,12 @@ Or,
 node dist/cjs/index.cjs [options]=[values]
 ```
 
-### All bundles
+### Supported NPM Package export types to be imported in your project
 
-- `dist/cjs/index.cjs` CommonJS module.
-- `dist/esm/index.mjs` EcmaScript module.
-- `dist/esm/index.min.mjs` Minified EcmaScript module.
-  <!-- - `dist/cjs-compat/index.js` CommonJS module, transpiled for older browsers. -->
-  <!-- - `dist/bundle.esm-compact.mjs` EcmaScript module, transpiled for older browsers. -->
-  <!-- - `dist/bundle.iife.min.js` Minified plain JS. -->
-  <!-- - `dist/bundle.iife-compact.js` As above, but transpiled for older browsers. -->
-
-### package.json Explanation
-
-**Note: It may be outdated, so check the main package.json for latest configs**
-
-- main - Path of the main script file (which will work as a fallback if exports field cannot be processed by the older nodejs)
-- module - Path of the module script file (if exports field could not be processed and the package uses import statements).
-- exports - Tells that this package will export:
-  - ESM folder's file if this package is imported as import
-  - CJS folder's file if this package is imported as require statements
-- types - Tells npm to look for the type declarations at the given file path in types field.
-- bin - Gives cli commands and their respective js file to run when the particular command is invoked.
-- pkg - An npm package which can generate executables out of npm packages. Here, we specify:
-  - targets to be operating system environments
-  - output path to be dist/bin folder for all generated executables.
-- scripts - Normal NPM scripts.
-  - prebuild - Runs before actual build script
-  - build - Builds the folders for distribution
-  - dev - Watch mode for typescript files
-  - generate-binary - Generates executables for major OS platforms.
-  - postbuild - Clean up after running build script
-- keywords - Basic keywords for the npm package
-
-Other things are normal for any npm package like repository for specifying remote git repository link, bugs for specifying remote git repository bugs and issues link, homepage for specifying either the README.md file link or the actual website link for the package homepage.
-
-### Publish to npm
-
-For publishing patch, first check if the git working directory is clean and committed and not dirty or modified. Then run the below commands:
-
-```sh
-npm version patch
-```
-
-As the package uses rollup and shows version in the CLI, so it will have to be built to dist/ folder after version change in package.json. Run :
-
-```sh
-npm run generate-binary
-```
-
-This will build the project, generate binary files in the dist folder. Now, commit the changes and push to remote repo.
+- `dist/cjs/index.cjs`: CommonJS module.
+- `dist/esm/index.mjs`: EcmaScript module.
+- `dist/esm/index.min.mjs`: Minified EcmaScript module.
+  <!-- - `dist/cjs-compat/index.js`: CommonJS module, transpiled for older browsers. -->
+  <!-- - `dist/bundle.esm-compact.mjs`: EcmaScript module, transpiled for older browsers. -->
+  <!-- - `dist/bundle.iife.min.js`: Minified plain JS. -->
+  <!-- - `dist/bundle.iife-compact.js`: Same iife as above, but transpiled for older browsers. -->

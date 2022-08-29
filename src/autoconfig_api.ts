@@ -66,14 +66,24 @@ export function configInit(): string {
 export function readOriginalConfig(
   original_config_path: string
 ): alacritty_config_structure {
+  let file_content: string;
+
   try {
-    const file_content: string = fs.readFileSync(original_config_path, "utf8"); // reads file
+    file_content = fs.readFileSync(original_config_path, "utf8"); // reads file
     let alacritty_config: any = YAML.parse(file_content); // parses the yaml and converts that to json format
     return alacritty_config;
   } catch (err: any) {
-    throw new Error(
-      "Cannot load original alacritty config file from the path provided.."
-    );
+    if (file_content === undefined) {
+      // if file does not exist, ..
+      throw new Error(
+        "Unable to read the newly-created/original alacritty config file from the default config path..\n\nPlease verify the file/folder permissions assigned to the alacritty's default config folder.."
+      );
+    } else {
+      throw new Error(
+        "Existing alacritty's config file cannot be parsed.\n\nPlease fix this YAML Parse Error and try again:\n" +
+          err.message
+      );
+    }
   }
 }
 
@@ -102,7 +112,7 @@ export function writeToConfigFile(
     fs.writeFileSync(yml_file_path, yml_str, "utf-8"); // write the yml str to the file
 
     console.log(
-      "----Alacritty Auto Config----\n\nYour configs will be applied..\nIn case, you did not see the new look in alacritty, we suggest to close and reopen all windows of alacritty"
+      "Your configs will be applied..\nIn case, you did not see the new look in alacritty, we suggest to close and reopen all windows of alacritty"
     );
   } catch (err: any) {
     console.log(
@@ -194,6 +204,7 @@ export function editConfig(
     background_opacity: background_opacity,
   };
 
-  writeToConfigFile(alacritty_updated_config, original_config_path_dir); // writing updated config to the original config path directory
+  // writing updated config to the original config path directory
+  writeToConfigFile(alacritty_updated_config, original_config_path_dir);
   return alacritty_updated_config;
 }

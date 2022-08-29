@@ -1,5 +1,4 @@
 import path from "path";
-import { URL } from "url";
 
 // file extension is needed for local modules,
 // but not needed for packages installed which have exports option
@@ -10,11 +9,14 @@ import {
   editConfig,
 } from "./autoconfig_api.js";
 import { alacritty_config_structure } from "./config_object_structures.js";
+import { isTheScriptRunFromCLI } from "./utils/internals.js";
 
 /**
  * Main Function which is run from the command line
  */
 function main() {
+  console.log("----Alacritty Auto Config----\n");
+
   let original_config_path: string = "";
 
   try {
@@ -24,13 +26,17 @@ function main() {
       readOriginalConfig(original_config_path);
     const original_config_path_dir: string = path.dirname(original_config_path);
 
+    /*
+    if the arguments are not passed, it will take the old config only, 
+    and if config does not have that property, it will set defaults for that
+    */
     let argumentInputs = takeArgumentInputs(alacritty_config);
-    // if the arguments are not passed, it will take the old config only, and if config does not have that property, it will set defaults for that
 
     editConfig(
       alacritty_config,
       {
-        fontsize: parseFloat("" + argumentInputs.s), // if they are string or number, convert that to string then parse its numeric value
+        // if they are string or number, convert that to string, then parse its numeric value
+        fontsize: parseFloat("" + argumentInputs.s),
         primary_bgcolor: argumentInputs.b,
         primary_fgcolor: argumentInputs.c,
         selection_fgcolor: argumentInputs.t,
@@ -40,22 +46,14 @@ function main() {
       original_config_path_dir
     );
   } catch (err) {
-    console.error("Error: " + err.message);
+    console.error("Error: " + err.message + "\n");
   }
 }
 
-/*
-converting the path to URL as this will make the valid url out of it, 
-like replace space with %20, or some special characters with some codes
-*/
-const fileURL: URL = new URL(`file://${process.argv[1]}`);
-
-// Only run main() function, when the file is run from cli
-// ! ISSUE: this if condition does not work for all cases, so we have to think of some alternative
-if (import.meta?.url === fileURL.toString()) {
+if (isTheScriptRunFromCLI()) {
   main();
 }
 
-// export all the api functions
+// export all the necessary api functions
 export * from "./autoconfig_api.js";
 export * from "./argument_parser_util.js";

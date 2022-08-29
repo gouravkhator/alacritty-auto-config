@@ -1,5 +1,4 @@
 import json from "@rollup/plugin-json";
-// import resolve from '@rollup/plugin-node-resolve';
 import replace from "@rollup/plugin-replace";
 import { terser } from "rollup-plugin-terser";
 import dts from "rollup-plugin-dts"; // for bundling all d.ts types files to one type declaration files
@@ -45,19 +44,24 @@ export default [
     plugins: [
       json(),
       replace({
-        //replace the version in the files, it will use as input or in the imported modules
-        //the delimiters are important else it would replace all words named versions
+        // replace the version in the files, it will use as input or in the imported modules
+        // the delimiters are important else it would replace all words named versions
         delimiters: ["{{", "}}"],
         version: packageVersion,
-        preventAssignment: true,
+
         // prevents assignment of '{{version}}' to a variable when this string is followed by '=' sign
         // Ex- let x = '{{version}}', then x will be {{version}} and not some version no.
+        preventAssignment: true,
       }),
     ],
 
-    external: [...builtins, "yargs", "yargs/helpers", "yaml"], // builtin nodejs modules and other external modules
-    context: "globalThis", // this was written as undefined so setting context to globalThis,
+    // builtin nodejs modules and other external modules
+    external: [...builtins, "yargs", "yargs/helpers", "yaml"],
+
+    // if we don't set the context to `globalThis`, the JavaScript `this` would then be written as `undefined`.. in the build so setting context to globalThis,
+    context: "globalThis",
   },
+
   // for bundling all d.ts types files to one type declaration files
   {
     input: "dist/types/index.d.ts",
