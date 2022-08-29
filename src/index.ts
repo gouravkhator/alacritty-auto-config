@@ -41,7 +41,7 @@ function main() {
         primary_fgcolor: argumentInputs.c,
         selection_fgcolor: argumentInputs.t,
         cursor_style: argumentInputs.y,
-        background_opacity: parseFloat("" + argumentInputs.o),
+        window_background_opacity: parseFloat("" + argumentInputs.o),
       },
       original_config_path_dir
     );

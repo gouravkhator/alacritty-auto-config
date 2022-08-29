@@ -137,7 +137,7 @@ function convertToHex(color_code) {
  * @returns Argument Inputs object with all properties taken as input from the user
  */
 function takeArgumentInputs(alacritty_old_config = {}) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
     // for referring to options' longnames
     const arg_keys = {
         s: "fontsize",
@@ -190,7 +190,7 @@ function takeArgumentInputs(alacritty_old_config = {}) {
         .default(arg_keys.c, (_h = (_g = (_f = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.colors) === null || _f === void 0 ? void 0 : _f.primary) === null || _g === void 0 ? void 0 : _g.foreground) !== null && _h !== void 0 ? _h : default_values.c)
         .default(arg_keys.t, (_l = (_k = (_j = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.colors) === null || _j === void 0 ? void 0 : _j.selection) === null || _k === void 0 ? void 0 : _k.text) !== null && _l !== void 0 ? _l : default_values.t)
         .default(arg_keys.y, (_o = (_m = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.cursor) === null || _m === void 0 ? void 0 : _m.style) !== null && _o !== void 0 ? _o : default_values.y)
-        .default(arg_keys.o, (_p = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.background_opacity) !== null && _p !== void 0 ? _p : default_values.o)
+        .default(arg_keys.o, (_q = (_p = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.window) === null || _p === void 0 ? void 0 : _p.opacity) !== null && _q !== void 0 ? _q : default_values.o)
         // number of arguments
         .nargs({
         [arg_keys.s]: 1,
@@ -406,16 +406,16 @@ function writeToConfigFile(alacritty_config_to_write, original_config_path_dir) 
  * @throwsError when some configs are in wrong format, or when the configs could not be written to file
  */
 function editConfig(alacritty_old_config = {}, new_config, original_config_path_dir) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
     // if old configs are there, then take that else leave alacritty to its default
     let old_bgcolor = (_c = (_b = (_a = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.colors) === null || _a === void 0 ? void 0 : _a.primary) === null || _b === void 0 ? void 0 : _b.background) !== null && _c !== void 0 ? _c : "";
     let old_fgcolor = (_f = (_e = (_d = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.colors) === null || _d === void 0 ? void 0 : _d.primary) === null || _e === void 0 ? void 0 : _e.foreground) !== null && _f !== void 0 ? _f : "";
     let old_fontsize = (_h = (_g = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.font) === null || _g === void 0 ? void 0 : _g.size) !== null && _h !== void 0 ? _h : undefined;
     let old_selcolor = (_l = (_k = (_j = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.colors) === null || _j === void 0 ? void 0 : _j.selection) === null || _k === void 0 ? void 0 : _k.text) !== null && _l !== void 0 ? _l : "";
     let old_cursor_style = (_o = (_m = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.cursor) === null || _m === void 0 ? void 0 : _m.style) !== null && _o !== void 0 ? _o : "Block";
-    let old_background_opacity = (_p = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.background_opacity) !== null && _p !== void 0 ? _p : undefined;
+    let old_background_opacity = (_q = (_p = alacritty_old_config === null || alacritty_old_config === void 0 ? void 0 : alacritty_old_config.window) === null || _p === void 0 ? void 0 : _p.opacity) !== null && _q !== void 0 ? _q : undefined;
     // take all new config params, and fallback to old config if not provided
-    let { primary_bgcolor = old_bgcolor, primary_fgcolor = old_fgcolor, fontsize = old_fontsize, selection_fgcolor = old_selcolor, cursor_style = old_cursor_style, background_opacity = old_background_opacity, } = new_config;
+    let { primary_bgcolor = old_bgcolor, primary_fgcolor = old_fgcolor, fontsize = old_fontsize, selection_fgcolor = old_selcolor, cursor_style = old_cursor_style, window_background_opacity = old_background_opacity, } = new_config;
     // we will convert every string to hex code starting with 0x (if possible), to save in new config file
     // if the colors are empty or undefined, then return undefined from convertToHex
     // if the colors are not in correct format, throw error
@@ -430,11 +430,13 @@ function editConfig(alacritty_old_config = {}, new_config, original_config_path_
         !["Block", "Underline", "Beam"].includes(capitaliseString(cursor_style))) {
         throw new Error("Cursor style provided is not in one of the 3 accepted styles");
     }
-    if (background_opacity < 0.0 || background_opacity > 1.0) {
-        throw new Error("Background opacity provided is not in the range 0.0 to 1.0");
+    if (window_background_opacity < 0.0 || window_background_opacity > 1.0) {
+        throw new Error("Background opacity provided is not in the range of 0.0 to 1.0");
     }
     // the config file only accepts hex codes starting with 0x
-    const alacritty_updated_config = Object.assign(Object.assign({}, alacritty_old_config), { font: {
+    const alacritty_updated_config = Object.assign(Object.assign({}, alacritty_old_config), { window: {
+            opacity: window_background_opacity,
+        }, font: {
             size: fontsize,
         }, colors: {
             primary: {
@@ -446,7 +448,7 @@ function editConfig(alacritty_old_config = {}, new_config, original_config_path_
             },
         }, cursor: {
             style: cursor_style,
-        }, background_opacity: background_opacity });
+        } });
     // writing updated config to the original config path directory
     writeToConfigFile(alacritty_updated_config, original_config_path_dir);
     return alacritty_updated_config;
@@ -474,7 +476,7 @@ function main() {
             primary_fgcolor: argumentInputs.c,
             selection_fgcolor: argumentInputs.t,
             cursor_style: argumentInputs.y,
-            background_opacity: parseFloat("" + argumentInputs.o),
+            window_background_opacity: parseFloat("" + argumentInputs.o),
         }, original_config_path_dir);
     }
     catch (err) {

@@ -2,6 +2,9 @@
  * Structure for the alacritty original config object in JSON format
  */
 export type alacritty_config_structure = {
+  window?: {
+    opacity?: number;
+  };
   font?: {
     size?: number;
   };
@@ -14,7 +17,6 @@ export type alacritty_config_structure = {
       text?: string;
     };
   };
-  background_opacity?: number;
   cursor?: {
     style?: string; // the exact values checks are already in api
   };
@@ -28,6 +30,6 @@ export type alacritty_summarized_config_structure = {
   primary_bgcolor?: string;
   primary_fgcolor?: string;
   selection_fgcolor?: string;
-  background_opacity?: number;
+  window_background_opacity?: number;
   cursor_style?: "Block" | "Underline" | "Beam";
 };

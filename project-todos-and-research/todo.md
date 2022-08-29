@@ -1,14 +1,6 @@
 # Todos
 
-- [ ] `background_opacity` field is deprecated from alacritty version `0.10.0`, so use below:
-
-  ```yaml
-  window:
-    opacity: 1.0
-  ```
-
-  > Note: Due to this issue, our package is currently compatible with alacritty version `0.4.0`.
-
+- [ ] Automate the CI part, so that when we change the version using `npm version patch/minor/major`, it should automatically run the `generate-binary` npm script, and then should stage and commit the new file changes.
 - [ ] If wrong param menu options are given, then error out.
 - [ ] Have to add a proper way to compile and test each functionality during development mode.
   - When we run `npm run dev`, our temp output `.js` files gets saved to `<project-root>/output-tsc` folder.

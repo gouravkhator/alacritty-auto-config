@@ -144,7 +144,7 @@ export function editConfig(
   let old_selcolor = alacritty_old_config?.colors?.selection?.text ?? "";
   let old_cursor_style = alacritty_old_config?.cursor?.style ?? "Block";
   let old_background_opacity =
-    alacritty_old_config?.background_opacity ?? undefined;
+    alacritty_old_config?.window?.opacity ?? undefined;
 
   // take all new config params, and fallback to old config if not provided
   let {
@@ -153,7 +153,7 @@ export function editConfig(
     fontsize = old_fontsize,
     selection_fgcolor = old_selcolor,
     cursor_style = old_cursor_style,
-    background_opacity = old_background_opacity,
+    window_background_opacity = old_background_opacity,
   } = new_config;
 
   // we will convert every string to hex code starting with 0x (if possible), to save in new config file
@@ -177,15 +177,18 @@ export function editConfig(
     );
   }
 
-  if (background_opacity < 0.0 || background_opacity > 1.0) {
+  if (window_background_opacity < 0.0 || window_background_opacity > 1.0) {
     throw new Error(
-      "Background opacity provided is not in the range 0.0 to 1.0"
+      "Background opacity provided is not in the range of 0.0 to 1.0"
     );
   }
 
   // the config file only accepts hex codes starting with 0x
   const alacritty_updated_config: alacritty_config_structure = {
     ...alacritty_old_config,
+    window: {
+      opacity: window_background_opacity,
+    },
     font: {
       size: fontsize,
     },
@@ -201,7 +204,6 @@ export function editConfig(
     cursor: {
       style: cursor_style,
     },
-    background_opacity: background_opacity,
   };
 
   // writing updated config to the original config path directory

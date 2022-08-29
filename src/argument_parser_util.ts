@@ -202,7 +202,7 @@ export function takeArgumentInputs(
       )
       .default(
         arg_keys.o,
-        alacritty_old_config?.background_opacity ?? default_values.o
+        alacritty_old_config?.window?.opacity ?? default_values.o
       )
 
       // number of arguments
