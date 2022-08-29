@@ -10,3 +10,4 @@
 - **v1.3.0 bump** - Added windows support.
 - **v1.3.1 bump** - Removed `yamljs` and `json2yaml` packages, and replace it with `yaml` npm package.
 - **v1.3.2 bump** - Solved the bug: [No functionality triggered when running the binaries of npm packages, installed locally or globally](https://github.com/gouravkhator/alacritty-auto-config/issues/2).
+- **v1.3.3 bump** - Updated the `background_opacity` field to `window.opacity`, thus solving the bug: [background_opacity field is deprecated from alacritty version 0.10.0](https://github.com/gouravkhator/alacritty-auto-config/issues/3).
