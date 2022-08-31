@@ -1,7 +1,7 @@
 # Todos
 
-- [ ] Automate the CI part, so that when we change the version using `npm version patch/minor/major`, it should automatically run the `generate-binary` npm script, and then should stage and commit the new file changes.
-- [ ] If wrong param menu options are given, then error out.
+- [ ] Automate the CI part, so that when we change the version using `npm version patch/minor/major`, it should automatically run the `generate-binary` npm script, and then should stage and commit the new file changes, and also publish it to npm.
+- [ ] If wrong param menu options are given, then throw an error to the end consumer of this package.
 - [ ] Have to add a proper way to compile and test each functionality during development mode.
   - When we run `npm run dev`, our temp output `.js` files gets saved to `<project-root>/output-tsc` folder.
   - And the `types` for all such `.ts` files would go into `<project-root>/dist/types` folder.

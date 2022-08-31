@@ -30,20 +30,42 @@
 
 Other things are normal for any npm package like repository for specifying remote git repository link, bugs for specifying remote git repository bugs and issues link, homepage for specifying either the README.md file link or the actual website link for the package homepage.
 
-## Publish this package to npm
+## Steps to Publish package to npm
 
-For publishing patch, first check if the git working directory is clean and committed and not dirty or modified. Then run the below commands:
+- Keep a clean local git repository. If any uncommitted/staged changes are there, please stage and commit them first.
 
-```sh
-npm version patch
-```
+- Update the npm version:
 
-As the package uses rollup and displays version in its help menu, so it will have to be built to `dist/` folder after every version change in `package.json` file.
+  ```sh
+  npm version <update-type>
+  ```
 
-Run below command to generate the binaries and build files again:
+  Here, the `<update-type>` should be replaced by either `major`, `minor`, or `patch`.
 
-```sh
-npm run generate-binary
-```
+- Update version in the build as well.
 
-This will build the project, and then generate the binary executables in the `dist` folder. Now, we can commit the changes and push to remote repo.
+  - As the package uses rollup and displays the cli version in its help menu, so the builds will have to be generated again at `dist/` folder, after every version change in `package.json` file.
+
+  - Run below command to generate the binaries and build files again:
+
+    ```sh
+    npm run generate-binary
+    ```
+
+  - This will build the project, and then generate the binary executables and updated cjs/esm files in the `dist` folder.
+
+- Now, we can commit the new builds and push this to our remote repo.
+
+  ```sh
+  git add .
+  git commit -m "v<current-version> builds"
+  git push origin main
+  ```
+
+  Here, `<current-version>` should be replaced by the version number, we just updated to.
+
+- Publish the updated package to npm as well by below command:
+
+  ```sh
+  npm publish
+  ```
