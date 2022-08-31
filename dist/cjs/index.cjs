@@ -186,7 +186,7 @@ function takeArgumentInputs(alacritty_old_config = {}) {
         // .demandOption(['s', 'b', 'c'])
         // options
         .help("h")
-        .version("1.3.3") // the version is replaced in rollup build process
+        .version("1.3.4") // the version is replaced in rollup build process
         // aliases
         .alias("s", arg_keys.s)
         .alias("b", arg_keys.b)
